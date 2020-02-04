@@ -1,5 +1,5 @@
-#ifndef KEYVALUE_DATA_STRUCTURE_H
-#define KEYVALUE_DATA_STRUCTURE_H
+#ifndef KEY_VALUE_DATA_STRUCTURE_H
+#define KEY_VALUE_DATA_STRUCTURE_H
 
 #include <unordered_map>
 #include <string>
@@ -12,8 +12,8 @@ using std::mutex;
 namespace kvstorage {	
 
 class Storage final {
-  unordered_map<string, string> storage_map;
-  mutex storage_mutex;
+  unordered_map<string, string> storage_map_;
+  mutex storage_mutex_;
   public:
     Storage() {}
     //put given (key, val) pair to Storage. If put successful, return true;
@@ -21,7 +21,7 @@ class Storage final {
     //get val for given key from storage. If key doesn't exist, return empty string;
     const string& Get(const string& key);
     // delete value of a given key from storage. If key exists, return true;
-    bool Deletekey(const string& key);
+    bool DeleteKey(const string& key);
 };
 
 }//end of kvstorage namespace
