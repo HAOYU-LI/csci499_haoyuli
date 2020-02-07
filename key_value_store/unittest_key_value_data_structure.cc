@@ -1,4 +1,5 @@
 #include "key_value_data_structure.h"
+#include "gtest/gtest.h"
 
 using kvstorage::Storage;
 using std::string;
@@ -6,18 +7,18 @@ using std::string;
 //test Put member function of Storage class.
 TEST(Storage, Put) {
   Storage storage_;
-  ASSERT_EQ(true, storage_.put("test", "test"));
+  ASSERT_EQ(true, storage_.Put("test", "test"));
 }
 //test Get member fucntion of Storage class.
 TEST(Storage, Get) {
   Storage storage_;
-  storage_.put("test", "test");
-  ASSERT_STREQ("test", storage_.get("test")); 
+  storage_.Put("test", "test");
+  ASSERT_STREQ("test", storage_.Get("test").c_str()); 
 }
 //test DeleteKey member function of Storage class.
 TEST(Storage, DeleteKey) {
   Storage storage_;
-  storage_.put("test", "test");
+  storage_.Put("test", "test");
   ASSERT_EQ(true, storage_.DeleteKey("test"));
 }
 

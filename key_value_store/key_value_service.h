@@ -20,7 +20,7 @@ using grpc::Status;
 using grpc::StatusCode;
 using kvstorage::Storage;
 
-namespace kvservice {
+namespace kvstore {
 class KeyValueStoreImpl final : public KeyValueStore::Service {
   
   //put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
@@ -30,13 +30,13 @@ class KeyValueStoreImpl final : public KeyValueStore::Service {
   Status get(ServerContext* context, 
   	          ServerReaderWriter<GetReply, GetRequest>* stream) override;
   //delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
-  Status deletekey(ServerContext* context, 
-  	                const DeleteRequest* request, DeleteReply* reply) override;
+  Status remove(ServerContext* context, 
+  	                const RemoveRequest* request, RemoveReply* reply) override;
 
  private:
   Storage storage_;
 
-}
-}//end of namespace kvservice
+};
+}//end of namespace kvstore
 
 #endif

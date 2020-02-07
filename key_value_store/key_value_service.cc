@@ -20,7 +20,7 @@ using grpc::StatusCode;
 using std::string;
 using kvstorage::Storage;
 
-namespace kvservice {
+namespace kvstore {
 //put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
 Status KeyValueStoreImpl::put(ServerContext* context, 
 	                             const PutRequest* request, PutReply* reply) {
@@ -36,7 +36,7 @@ Status KeyValueStoreImpl::put(ServerContext* context,
 Status KeyValueStoreImpl::get(ServerContext* context, 
 	                             ServerReaderWriter<GetReply, GetRequest>* stream) {
   GetRequest request;
-  while (stream->read(&request)) {
+  while (stream->Read(&request)) {
     string request_key = request.key();
     string reply_value = storage_.Get(request_key);
     if (reply_value.length() > 0) {
@@ -51,24 +51,24 @@ Status KeyValueStoreImpl::get(ServerContext* context,
 }
 
 //delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
-Status KeyValueStoreImpl::deletekey(ServerContext* context, 
-	                                   const DeleteRequest* request, DeleteReply* reply) {
+Status KeyValueStoreImpl::remove(ServerContext* context, 
+	                                   const RemoveRequest* request, RemoveReply* reply) {
   if (storage_.DeleteKey(request->key())) {
     return Status::OK;
   } else {
-    return Status(StatusCode::NOT_FOUND, "Failed to delete the key.")
+    return Status(StatusCode::NOT_FOUND, "Failed to delete the key.");
   }
 }
-} // end of namespace kvservice.
+} // end of namespace kvstore.
 
 int main(int argc, char** argv) {
   string key_value_server_address("0.0.0.0:50001");
   ServerBuilder serverbuilder;
-  kvservice::KeyValueStoreImpl service_impl;
-  builder.AddListeningPort(key_value_server_address, 
+  kvstore::KeyValueStoreImpl service_impl;
+  serverbuilder.AddListeningPort(key_value_server_address, 
   	                        grpc::InsecureServerCredentials());
-  builder.RegisterService(&service_impl);
-  std::unique_ptr<Server> server(builder.BuildAndStart());
+  serverbuilder.RegisterService(&service_impl);
+  std::unique_ptr<Server> server(serverbuilder.BuildAndStart());
   std::cout<<"key value server is listening on port : "<<key_value_server_address<<std::endl;
   server->Wait();
 }

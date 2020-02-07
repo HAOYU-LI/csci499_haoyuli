@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+605092a1d92cad3976140726a6f9449c key_value_store.pb.cc
