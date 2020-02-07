@@ -18,12 +18,13 @@ const string& Storage::Get(const string& key) {
   std::lock_guard<std::mutex> lock(storage_mutex_);
   unordered_map<string, string>::const_iterator got = storage_map_.find(key);
   bool get_succeed = got != storage_map_.end();
-  return get_succeed ? got->second : "";
+  static const string empty = "";
+  return get_succeed ? got->second : empty;
 }
 
 bool Storage::DeleteKey(const string& key) {
   std::lock_guard<std::mutex> lock(storage_mutex_);
-  boolean delete_succeed = storage_map_.find(key) == storage_map_.end() || 
+  bool delete_succeed = storage_map_.find(key) == storage_map_.end() || 
                            storage_map_.erase(key) == 1;
   return delete_succeed;
 }
