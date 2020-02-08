@@ -1,0 +1,7 @@
+# CmakeFiles are ignored in git commit
+key_value_store/CMakeFiles/*
+key_value_store/--grpc_out
+key_value_store/CMakeCache.txt
+key_value_store/cmake_install.cmake
+key_value_store/.pb.cc
+key_value_store/.pb.h
