@@ -3,7 +3,6 @@
 namespace kvstorage{
 
 bool Storage::Put(const string& key, const string& val) {
-  //we don't allow put empty message into database.
   if (val.length() == 0) {
     return false; 
   }
