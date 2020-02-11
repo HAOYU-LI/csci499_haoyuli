@@ -22,21 +22,18 @@ using kvstorage::Storage;
 
 namespace kvstore {
 class KeyValueStoreImpl final : public KeyValueStore::Service {
-  
-  //put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
+  // Put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
   Status put(ServerContext* context, 
   	          const PutRequest* request, PutReply* reply) override;
-  //get value from key value backend storage. If key doesn't exist, return StatusCode::NOT_FOUND
+  // Get value from key value backend storage. If key doesn't exist, return StatusCode::NOT_FOUND
   Status get(ServerContext* context, 
   	          ServerReaderWriter<GetReply, GetRequest>* stream) override;
-  //delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
+  // Delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
   Status remove(ServerContext* context, 
   	                const RemoveRequest* request, RemoveReply* reply) override;
-
  private:
   Storage storage_;
-
 };
-}//end of namespace kvstore
+}// End of namespace kvstore
 
 #endif

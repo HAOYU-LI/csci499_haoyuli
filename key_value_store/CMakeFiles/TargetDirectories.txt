@@ -1,5 +1,0 @@
-/vagrant/code/csci499_haoyuli/key_value_store/CMakeFiles/rebuild_cache.dir
-/vagrant/code/csci499_haoyuli/key_value_store/CMakeFiles/key_value_data_structure.dir
-/vagrant/code/csci499_haoyuli/key_value_store/CMakeFiles/unittest_key_value_data_structure.dir
-/vagrant/code/csci499_haoyuli/key_value_store/CMakeFiles/key_value_service.dir
-/vagrant/code/csci499_haoyuli/key_value_store/CMakeFiles/edit_cache.dir

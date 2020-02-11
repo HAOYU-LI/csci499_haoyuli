@@ -2,28 +2,33 @@
 #define KEY_VALUE_DATA_STRUCTURE_H
 
 #include <unordered_map>
+#include <vector>
 #include <string>
 #include <mutex>
 
 using std::string;
 using std::unordered_map;
+using std::vector;
 using std::mutex;
 
 namespace kvstorage {	
-
+/* 
+    Underlying data structure for key value store. Storage class support Put, 
+    Get and DeleteKey methods under multithread environment.
+*/  
 class Storage final {
-  unordered_map<string, string> storage_map_;
+  unordered_map<string, vector<string>*> storage_map_;
   mutex storage_mutex_;
   public:
     Storage() {}
-    //put given (key, val) pair to Storage. If put successful, return true;
+    // Put given (key, val) pair to Storage. If put successful, return true;
     bool Put(const string& key, const string& val);
-    //get val for given key from storage. If key doesn't exist, return empty string;
-    const string& Get(const string& key);
-    // delete value of a given key from storage. If key exists, return true;
+    // Get val for given key from storage. If key doesn't exist, return null pointer;
+    const vector<string>* Get(const string& key);
+    // Delete value of a given key from storage. If key is deleted, return true;
     bool DeleteKey(const string& key);
 };
 
-}//end of kvstorage namespace
+}// End of kvstorage namespace
 
 #endif

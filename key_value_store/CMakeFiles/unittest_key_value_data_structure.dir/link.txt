@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=c++17 -pthread  -rdynamic CMakeFiles/unittest_key_value_data_structure.dir/unittest_key_value_data_structure.cc.o  -o unittest_key_value_data_structure   -L/usr/local/lib  -Wl,-rpath,/usr/local/lib -lgtest -lgtest_main libkey_value_data_structure.a 
