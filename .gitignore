@@ -6,3 +6,13 @@ key_value_store/cmake_install.cmake
 key_value_store/.pb.cc
 key_value_store/.pb.h
 key_value_store/Makefile
+
+# Files in func folder
+func/CMakeCache.txt
+func/func_service.pb.h
+func/func_service.pb.cc
+func/func_service.grpc.pb.h
+func/func_service.grpc.pb.cc
+func/CMakeFiles/*
+func/cmake_install.cmake
+func/Makefile
