@@ -1,6 +1,7 @@
 #include "key_value_service.h"
 
 #include <string>
+#include <vector>
 
 #include "key_value_store.grpc.pb.h"
 #include "key_value_store.pb.h"
@@ -18,48 +19,46 @@ using grpc::ServerReaderWriter;
 using grpc::Status;
 using grpc::StatusCode;
 using std::string;
+using std::vector;
 using kvstorage::Storage;
 
 namespace kvstore {
-//put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
+// Put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
 Status KeyValueStoreImpl::put(ServerContext* context, 
 	                             const PutRequest* request, PutReply* reply) {
   bool put_result = storage_.Put(request->key(), request->value());
- 	if (put_result) {
- 	  return Status::OK;
- 	} else {
- 	  return Status(StatusCode::UNKNOWN, "put <key, value> failed.");
- 	}
+  return Status::OK;
 }
 
-//get value from key value backend storage. If key doesn't exist, return StatusCode::NOT_FOUND
+// Get value from key value backend storage. If key doesn't exist, return StatusCode::NOT_FOUND
 Status KeyValueStoreImpl::get(ServerContext* context, 
-	                             ServerReaderWriter<GetReply, GetRequest>* stream) {
+	                            ServerReaderWriter<GetReply, GetRequest>* stream) {
   GetRequest request;
   while (stream->Read(&request)) {
     string request_key = request.key();
-    string reply_value = storage_.Get(request_key);
-    if (reply_value.length() > 0) {
+    const vector<string>* values = storage_.Get(request_key);
+    if (values == nullptr) {
+      return Status(StatusCode::NOT_FOUND, "Key is not found.");
+    }
+    for (auto value : (*values)) {
       GetReply reply;
-      reply.set_value(reply_value);
+      reply.set_value(value);
       stream->Write(reply);
-      return Status::OK;
-    } else {
-      return Status(StatusCode::NOT_FOUND, "The key does not exist in database.");
     }
   }
+  return Status::OK;
 }
 
-//delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
+// Delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
 Status KeyValueStoreImpl::remove(ServerContext* context, 
 	                                   const RemoveRequest* request, RemoveReply* reply) {
   if (storage_.DeleteKey(request->key())) {
     return Status::OK;
-  } else {
-    return Status(StatusCode::NOT_FOUND, "Failed to delete the key.");
   }
+  return Status(StatusCode::NOT_FOUND, "Failed to delete the key.");
 }
-} // end of namespace kvstore.
+
+} // End of namespace kvstore.
 
 int main(int argc, char** argv) {
   string key_value_server_address("0.0.0.0:50001");

@@ -3,23 +3,20 @@
 namespace kvstorage{
 
 bool Storage::Put(const string& key, const string& val) {
-  //we don't allow put empty message into database.
-  if (val.length() == 0) {
-    return false; 
-  }
   std::lock_guard<std::mutex> lock(storage_mutex_);
-  storage_map_.insert({key, val});
-  unordered_map<string, string>::const_iterator got = storage_map_.find(key);
-  bool put_succeed = got != storage_map_.end() && val.compare(got->second) == 0;
-  return put_succeed;
+  bool notFindKey = storage_map_.find(key) == storage_map_.end();
+  if (notFindKey) {
+    storage_map_[key] = new vector<string>();
+  }
+  storage_map_[key]->push_back(val);
+  return true;
 }
 
-const string& Storage::Get(const string& key) {
+const vector<string>* Storage::Get(const string& key) {
   std::lock_guard<std::mutex> lock(storage_mutex_);
-  unordered_map<string, string>::const_iterator got = storage_map_.find(key);
+  unordered_map<string, vector<string>*>::const_iterator got = storage_map_.find(key);
   bool get_succeed = got != storage_map_.end();
-  static const string empty = "";
-  return get_succeed ? got->second : empty;
+  return get_succeed ? got->second : nullptr;
 }
 
 bool Storage::DeleteKey(const string& key) {
@@ -29,4 +26,4 @@ bool Storage::DeleteKey(const string& key) {
   return delete_succeed;
 }
 
-}// end of kvstorage namespace
+}// End of kvstorage namespace
