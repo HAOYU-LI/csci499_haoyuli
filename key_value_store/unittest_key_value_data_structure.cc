@@ -23,7 +23,7 @@ TEST_F(StorageTest, Put) {
   ASSERT_EQ(true, storage->Put("test", "test"));
 }
 //test Get member fucntion of Storage class.
-TEST_F(StorageTest, Get) {
+TEST_F(StorageTest, GetWithoutInternalError) {
   storage->Put("test", "test");
   const vector<string>* vals = storage->Get("test");
   ASSERT_EQ(vals->size(), 1);
@@ -35,7 +35,7 @@ TEST_F(StorageTest, GetKeyNotExist) {
   ASSERT_EQ(vals, nullptr);
 }
 //test DeleteKey member function of Storage class.
-TEST_F(StorageTest, DeleteKey) {
+TEST_F(StorageTest, DeleteKeyWithoutInternalError) {
   storage->Put("test", "test");
   ASSERT_EQ(true, storage->DeleteKey("test"));
 }

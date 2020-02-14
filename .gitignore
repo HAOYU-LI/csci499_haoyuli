@@ -1,3 +1,5 @@
+.DS_Store
+protos/.DS_Store
 # CmakeFiles are ignored in git commit
 key_value_store/CMakeFiles/*
 key_value_store/--grpc_out
@@ -16,3 +18,11 @@ func/func_service.grpc.pb.cc
 func/CMakeFiles/*
 func/cmake_install.cmake
 func/Makefile
+
+# Files in warble folder
+warble/CMakeCache.txt
+warble/cmake_install.cmake
+warble/Makefile
+warble/warble_service.pb.h
+warble/warble_service.pb.cc
+warble/CMakeFiles/*
