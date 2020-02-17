@@ -2,6 +2,7 @@
 #define KEY_VALUE_CLIENT_H
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <grpcpp/grpcpp.h>
 
@@ -32,13 +33,13 @@ namespace kvstore {
 */
 class KeyValueClient {
 public:
-  KeyValueClent(std::shared_ptr<Channel> channel)
+  KeyValueClient(std::shared_ptr<Channel> channel)
     : stub_(KeyValueStore::NewStub(channel)) {}
 
   // Assemble payloads for put service. Send it to server and receive response.
   void put(const string& key, const string& val);
-  // Assemble payloads for get service. Send request to server and return the response.
-  const vector<string>* get(const vector<string>& keys);
+  // Assemble payloads for get service. Send request to server and print the response.
+  void get(const vector<string>& keys);
   // Obtain key from user and send remove request to server.
   void remove(const string& key);
 

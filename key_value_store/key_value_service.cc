@@ -36,8 +36,10 @@ Status KeyValueStoreImpl::get(ServerContext* context,
   GetRequest request;
   while (stream->Read(&request)) {
     string request_key = request.key();
+    std::cout << "received key : " << request_key << std::endl;
     const vector<string>* values = storage_.Get(request_key);
     if (values == nullptr) {
+      std::cout << "Key is not found." << std::endl;
       return Status(StatusCode::NOT_FOUND, "Key is not found.");
     }
     for (auto value : (*values)) {
@@ -45,6 +47,7 @@ Status KeyValueStoreImpl::get(ServerContext* context,
       reply.set_value(value);
       stream->Write(reply);
     }
+    std::cout << "end of writing reply." << std::endl;
   }
   return Status::OK;
 }
