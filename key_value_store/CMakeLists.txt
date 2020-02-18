@@ -76,6 +76,18 @@ target_link_libraries(key_value_service
     glog::glog
     key_value_data_structure)
 
+# Compile key_value_client
+add_executable(key_value_client key_value_client.cc
+    key_value_client.h
+    ${store_proto_srcs}
+    ${store_grpc_srcs})
+
+target_link_libraries(key_value_client
+    ${_GRPC_GRPCPP_UNSECURE}
+    ${_PROTOBUF_LIBPROTOBUF}
+    gRPC::grpc++
+    glog::glog)
+
 
 
 
