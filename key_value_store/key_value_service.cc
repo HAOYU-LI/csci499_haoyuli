@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include <glog/logging.h>
+
 #include "key_value_store.grpc.pb.h"
 #include "key_value_store.pb.h"
 
@@ -36,10 +38,10 @@ Status KeyValueStoreImpl::get(ServerContext* context,
   GetRequest request;
   while (stream->Read(&request)) {
     string request_key = request.key();
-    std::cout << "received key : " << request_key << std::endl;
+    LOG(INFO) << "received key : " << request_key << std::endl;
     const vector<string>* values = storage_.Get(request_key);
     if (values == nullptr) {
-      std::cout << "Key is not found." << std::endl;
+      LOG(INFO) << "Key is not found." << std::endl;
       return Status(StatusCode::NOT_FOUND, "Key is not found.");
     }
     for (auto value : (*values)) {
@@ -47,7 +49,7 @@ Status KeyValueStoreImpl::get(ServerContext* context,
       reply.set_value(value);
       stream->Write(reply);
     }
-    std::cout << "end of writing reply." << std::endl;
+    LOG(INFO) << "end of writing reply." << std::endl;
   }
   return Status::OK;
 }
@@ -64,6 +66,7 @@ Status KeyValueStoreImpl::remove(ServerContext* context,
 } // End of namespace kvstore.
 
 int main(int argc, char** argv) {
+  google::InitGoogleLogging(argv[0]);
   string key_value_server_address("0.0.0.0:50001");
   ServerBuilder serverbuilder;
   kvstore::KeyValueStoreImpl service_impl;

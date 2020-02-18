@@ -6,6 +6,7 @@
 #include <thread>
 
 #include <grpcpp/grpcpp.h>
+#include <glog/logging.h>
 
 #include "key_value_store.pb.h"
 #include "key_value_store.grpc.pb.h"
@@ -32,7 +33,7 @@ using std::endl;
 
 namespace kvstore {
 // Assemble payloads for put service. Send it to server and receive response.
-void KeyValueClient::put(const string& key, const string& val) {
+bool KeyValueClient::Put(const string& key, const string& val) {
   PutRequest request;
   request.set_key(key);
   request.set_value(val);
@@ -40,9 +41,11 @@ void KeyValueClient::put(const string& key, const string& val) {
   ClientContext context;
 
   Status status = stub_->put(&context, request, &reply);
+  return status.ok();
 }
+
 // Assemble payloads for get service. Send request to server and return the response.
-void KeyValueClient::get(const vector<string>& keys) {
+vector<string>* KeyValueClient::Get(const vector<string>& keys) {
   ClientContext context;
   std::shared_ptr<ClientReaderWriter<GetRequest, GetReply> > stream(
         stub_->get(&context));
@@ -50,35 +53,41 @@ void KeyValueClient::get(const vector<string>& keys) {
   // Create thread for writing request to server:
   std::thread writer([stream, keys]() {
   for (const string& key : keys) {
-    cout << "Sending key : " << key << " to key value store server" << endl;
+    LOG(INFO) << "Querying " << key << " from key value store server" << endl;
     GetRequest request;
     request.set_key(key); 
     stream->Write(request);
   }
   stream->WritesDone();
   });
+
   // Main thread that is used to read response from server.
   GetReply reply;
+  vector<string>* result = new vector<string>();
   while (stream->Read(&reply)) {
-    cout << "Get reply " << reply.value() << " from server" << endl;
+    LOG(INFO) << "Get reply " << reply.value() << " from server" << endl;
+    result->push_back(reply.value());
   }
+
   writer.join();
   Status status = stream->Finish();
   if (!status.ok()) {
-    cout << "get rpc failed." << endl;
-    return;
+    LOG(ERROR) << "get rpc failed. Key is not found." << endl;
+    return result;
   }
-  cout << "get rpc succeed." << endl;
+  LOG(INFO) << "get rpc succeed." << endl;
+  return result;
 }
 
 // Obtain key from user and send remove request to server.
-void KeyValueClient::remove(const string& key) {
+bool KeyValueClient::Remove(const string& key) {
   RemoveRequest request;
   request.set_key(key);
   RemoveReply reply;
   ClientContext context;
 
   Status status = stub_->remove(&context, request, &reply);
+  return status.ok();
 } 
 
 }// End of kvstore namespace

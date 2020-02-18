@@ -37,14 +37,14 @@ public:
     : stub_(KeyValueStore::NewStub(channel)) {}
 
   // Assemble payloads for put service. Send it to server and receive response.
-  void put(const string& key, const string& val);
+  bool Put(const string& key, const string& val);
   // Assemble payloads for get service. Send request to server and print the response.
-  void get(const vector<string>& keys);
+  vector<string>* Get(const vector<string>& keys);
   // Obtain key from user and send remove request to server.
-  void remove(const string& key);
+  bool Remove(const string& key);
 
 private:
-	 std::unique_ptr<KeyValueStore::Stub> stub_;
+	std::unique_ptr<KeyValueStore::Stub> stub_;
 };
 }// End of kvstore namespace
 
