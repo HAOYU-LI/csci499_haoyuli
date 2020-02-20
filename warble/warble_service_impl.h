@@ -30,24 +30,25 @@ namespace warble {
 */
 class WarbleService {
 public:
-	 // Register users to backend store given non-blank username
-  Status registerUser(const RegisteruserRequest* request,
+	// Register users to backend store given non-blank username
+  // If username already exists, return StatusCode::ALREADY_EXISTS
+  Status RegisterUser(const RegisteruserRequest* request,
   	                     RegisteruserReply* reply,
   	                     KeyValueClient* kvclient);
   // Posts a new warble (optionally as a reply), returns the id of the new warble
-  Status warble(const WarbleRequest* request,
+  Status Warble(const WarbleRequest* request,
   	                     WarbleReply* reply,
   	                     KeyValueClient* kvclient);
   // Starts following a given user;
-  Status follow(const FollowRequest* request,
+  Status Follow(const FollowRequest* request,
   	                     FollowReply* reply,
   	                     KeyValueClient* kvclient);
   // Reads a warble thread from the given id
-  Status read(const ReadRequest* request, 
+  Status Read(const ReadRequest* request, 
   	                     ReadReply* reply,
   	                     KeyValueClient* kvclient);
   // Returns this user’s following and followers
-  Status profile(const ProfileRequest* request,
+  Status Profile(const ProfileRequest* request,
   	                     ProfileReply* reply,
   	                     KeyValueClient* kvclient);
 };
