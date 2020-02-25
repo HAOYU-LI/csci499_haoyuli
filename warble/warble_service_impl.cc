@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <sys/time.h>
 
 #include "warble_service.pb.h"
 
@@ -42,7 +43,31 @@ Status WarbleService::RegisterUser(const RegisteruserRequest* request,
 Status WarbleService::Warble(const WarbleRequest* request,
                              WarbleReply* reply,
                              const KeyValueClient& kvclient) {
-  //to be done
+  // Store WarbleRequest into a warble.
+  Warble warble;
+  warble.set_username(request->username());
+  warble.set_text(request->text());
+  warble.set_parent_id(request->parent_id());
+  // Set timestamp of warble.
+  Timestamp timestamp;
+  struct timeval tv;
+  gettimeofday(&tv1, NULL);
+  timestamp.set_seconds((int64_t) tv.tv_sec);
+  timestamp.set_useconds((int64_t) tv.tv_usec);
+  warble.set_timestamp(timestamp);
+  // Warble id will be serialized warble message
+  // (username, text, parent_id, timestamp) without id.
+  std::string warble_id;
+  warble.SerializeToString(&warble_id);
+  warble.set_id(warble_id);
+  // Save warble into kvstore.
+  std::string serialized_warble;
+  warble.SerializeToString(&serialized_warble);
+  kvclient.Put(warble_id, serialized_warble);
+  // Write warble to WarbleReply.
+  reply->set_warble(warble);
+  
+  return Status:OK;
 }
 
 // Starts following a given user;
@@ -64,10 +89,19 @@ Status WarbleService::Follow(const FollowRequest* request,
 Status WarbleService::Read(const ReadRequest* request, 
                            ReadReply* reply,
                            const KeyValueClient& kvclient) {
-  // to be done
-  // ReadReply* reply needs to return Warbles to users,
-  // which means Warble should be stored as string
-  // in backend storage. Point needs to be solved.
+  std::string warble_id = request->warble_id();
+  std::vector<std::string>* serialized_warbles = kvclient.Get(warble_id);
+  if (serialized_warbles == nullptr) {
+    return Status(StatusCode::NOT_FOUND, "Warble_id is not found.");
+  }
+  // Iterate serialized warble strings and parse them back to warble.
+  for (auto serialized_warble : &serialized_warbles) {
+    Warble warble;
+    warble.ParseFromString(serialized_warble);
+    reply->warbles().add_warbles(warble);
+  }
+
+  return Status::OK;
 }
 
 // Returns this user’s following and followers
