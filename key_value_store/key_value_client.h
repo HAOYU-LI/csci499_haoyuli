@@ -24,8 +24,6 @@ using grpc::ClientContext;
 using grpc::Status;
 using grpc::Status;
 using grpc::StatusCode;
-using std::string;
-using std::vector;
 
 namespace kvstore {
 /*
@@ -37,14 +35,14 @@ public:
     : stub_(KeyValueStore::NewStub(channel)) {}
 
   // Assemble payloads for put service. Send it to server and receive response.
-  bool Put(const string& key, const string& val);
+  bool Put(const std::string& key, const std::string& val);
   // Assemble payloads for get service. Send request to server and print the response.
-  vector<string>* Get(const vector<string>& keys);
+  std::vector<std::string>* Get(const std::vector<std::string>& keys);
   // Obtain key from user and send remove request to server.
-  bool Remove(const string& key);
+  bool Remove(const std::string& key);
 
 private:
-	std::unique_ptr<KeyValueStore::Stub> stub_;
+  std::unique_ptr<KeyValueStore::Stub> stub_;
 };
 }// End of kvstore namespace
 

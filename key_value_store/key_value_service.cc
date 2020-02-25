@@ -27,14 +27,14 @@ using kvstorage::Storage;
 namespace kvstore {
 // Put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
 Status KeyValueStoreImpl::put(ServerContext* context, 
-	                             const PutRequest* request, PutReply* reply) {
+                               const PutRequest* request, PutReply* reply) {
   bool put_result = storage_.Put(request->key(), request->value());
   return Status::OK;
 }
 
 // Get value from key value backend storage. If key doesn't exist, return StatusCode::NOT_FOUND
 Status KeyValueStoreImpl::get(ServerContext* context, 
-	                            ServerReaderWriter<GetReply, GetRequest>* stream) {
+                              ServerReaderWriter<GetReply, GetRequest>* stream) {
   GetRequest request;
   while (stream->Read(&request)) {
     string request_key = request.key();
@@ -56,7 +56,7 @@ Status KeyValueStoreImpl::get(ServerContext* context,
 
 // Delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
 Status KeyValueStoreImpl::remove(ServerContext* context, 
-	                                   const RemoveRequest* request, RemoveReply* reply) {
+                                     const RemoveRequest* request, RemoveReply* reply) {
   if (storage_.DeleteKey(request->key())) {
     return Status::OK;
   }
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
   ServerBuilder serverbuilder;
   kvstore::KeyValueStoreImpl service_impl;
   serverbuilder.AddListeningPort(key_value_server_address, 
-  	                        grpc::InsecureServerCredentials());
+                            grpc::InsecureServerCredentials());
   serverbuilder.RegisterService(&service_impl);
   std::unique_ptr<Server> server(serverbuilder.BuildAndStart());
   std::cout<<"key value server is listening on port : "<<key_value_server_address<<std::endl;
