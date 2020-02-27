@@ -27,7 +27,7 @@ set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
 set(_GRPC_GRPCPP_UNSECURE grpc++_unsecure) 
 set(_GRPC_CPP_PLUGIN_EXECUTABLE /usr/local/bin/grpc_cpp_plugin)
 
-#Generate gRPC code
+# Generate gRPC code
 set(DIST_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 set(warble_proto_srcs "${DIST_DIR}/warble_service.pb.cc")
 set(warble_proto_hdrs "${DIST_DIR}/warble_service.pb.h")
@@ -39,10 +39,32 @@ add_custom_command(
         "${warble_proto}"
       DEPENDS ${warble_proto})
 
-# Include generated *.pb.h files
-# include_directories("${DIST_DIR}")
-
+# Generate target executable
 #add_executable(warble_service_impl warble_service_impl.cc
 #    warble_service_impl.h
+#    ../key_value_store/key_value_client.cc
+#    ../key_value_store/key_value_store.pb.cc
+#    ../key_value_store/key_value_store.grpc.pb.cc
 #    ${warble_proto_srcs})
 
+#target_link_libraries(warble_service_impl
+#    ${_GRPC_GRPCPP_UNSECURE}
+#    ${_PROTOBUF_LIBPROTOBUF}
+#    gRPC::grpc++
+#    glog::glog)
+
+# Include unit test:
+add_executable(unittest_warble_service unittest_warble_service.cc
+    warble_service_impl.cc
+    ../key_value_store/key_value_client.cc
+    ../key_value_store/key_value_store.pb.cc
+    ../key_value_store/key_value_store.grpc.pb.cc
+    ${warble_proto_srcs})
+
+target_link_libraries(unittest_warble_service PUBLIC
+    gtest
+    gtest_main
+    ${_GRPC_GRPCPP_UNSECURE}
+    ${_PROTOBUF_LIBPROTOBUF}
+    gRPC::grpc++
+    glog::glog)
