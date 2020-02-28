@@ -10,11 +10,11 @@ using kvstore::KeyValueClient;
 using grpc::Status;
 
 class WarbleServiceTest : public ::testing::Test {
-  protected:
+protected:
   void SetUp() override {
     warble_service = new WarbleService();
-    kvclient = new KeyValueClient(grpc::CreateChannel("0.0.0.0:50001", 
-                                  grpc::InsecureChannelCredentials()));
+    kvclient = new KeyValueClient(grpc::CreateChannel("0.0.0.0:50001",
+                           grpc::InsecureChannelCredentials()));
   }
 
   void TearDown() override {
@@ -73,10 +73,3 @@ int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-
-
-
-
-
-
-
