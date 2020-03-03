@@ -36,6 +36,7 @@ Status WarbleService::RegisterUser(const RegisteruserRequest* request,
   std::vector<std::string>* kvclient_get_result = kvclient->Get(kvclient_key);
   if (kvclient_get_result != nullptr) {
     LOG(INFO) << "[warble_service] Username already exists" << std::endl;
+    delete kvclient_get_result;
     return Status(StatusCode::ALREADY_EXISTS, "Username already exists.");
   }
   kvclient->Put(username_key, username);
@@ -102,6 +103,7 @@ Status WarbleService::Read(const ReadRequest* request,
     new_warble->ParseFromString(serialized_warble);
   }
   
+  delete serialized_warbles;
   return Status::OK;
 }
 
@@ -122,14 +124,16 @@ Status WarbleService::Profile(const ProfileRequest* request,
     for (const std::string username : (*following_usernames)) {
       reply->add_following(username);
     }
+    delete following_usernames;
   }
-
+  
   if (followed_by_usernames != nullptr) {
     for (const std::string username : (*followed_by_usernames)) {
       reply->add_followers(username);
     }
+    delete followed_by_usernames;
   }
-
+  
   return Status::OK;
 }
 }// namespace warble

@@ -1,5 +1,6 @@
 #include "key_value_data_structure.h"
 #include "gtest/gtest.h"
+#include <iostream>
 
 using kvstorage::Storage;
 using std::string;
@@ -25,14 +26,16 @@ TEST_F(StorageTest, Put) {
 //test Get member fucntion of Storage class.
 TEST_F(StorageTest, GetWithoutInternalError) {
   storage->Put("test", "test");
-  const vector<string>* vals = storage->Get("test");
-  ASSERT_EQ(vals->size(), 1);
-  ASSERT_STREQ("test", vals->at(0).c_str()); 
+  const vector<string>& vals = storage->Get("test");
+  std::cout << vals.size() << std::endl;
+  std::cout << vals[0] << std::endl;
+  ASSERT_EQ(vals.size(), 1);
+  ASSERT_STREQ("test", vals[0].c_str()); 
 }
 //test Get member function when key does not exist.
 TEST_F(StorageTest, GetKeyNotExist) {
-  const vector<string>* vals = storage->Get("NOT_EXIST_KEY");
-  ASSERT_EQ(vals, nullptr);
+  const vector<string>& vals = storage->Get("NOT_EXIST_KEY");
+  ASSERT_EQ(vals.size(), 0);
 }
 //test DeleteKey member function of Storage class.
 TEST_F(StorageTest, DeleteKeyWithoutInternalError) {
