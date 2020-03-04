@@ -12,17 +12,14 @@ using grpc::Status;
 class WarbleServiceTest : public ::testing::Test {
 protected:
   void SetUp() override {
-    warble_service = new WarbleService();
     kvclient = new KeyValueClient(grpc::CreateChannel("0.0.0.0:50001",
                            grpc::InsecureChannelCredentials()));
   }
 
   void TearDown() override {
-    delete warble_service;
     delete kvclient;
   }
 
-  WarbleService* warble_service;
   KeyValueClient* kvclient;
 };
 
@@ -31,7 +28,7 @@ TEST_F(WarbleServiceTest, RegisterUserStatusCheck) {
   RegisteruserRequest register_user_request;
   register_user_request.set_username("test_username");
   RegisteruserReply register_user_reply;
-  Status status = warble_service->RegisterUser(&register_user_request, 
+  Status status = WarbleService::RegisterUser(&register_user_request, 
                                               &register_user_reply, kvclient);
   ASSERT_EQ(true, status.ok());
 }
@@ -42,7 +39,7 @@ TEST_F(WarbleServiceTest, WarbleMethodStatusCheck) {
   warble_request.set_username("test_username");
   warble_request.set_text("test_text");
   WarbleReply warble_reply;
-  Status status = warble_service->WarbleMethod(&warble_request, 
+  Status status = WarbleService::WarbleMethod(&warble_request, 
                                               &warble_reply, kvclient);
   ASSERT_EQ(true, status.ok());
 }
@@ -53,7 +50,7 @@ TEST_F(WarbleServiceTest, FollowStatusCheck) {
   follow_request.set_username("test_username");
   follow_request.set_to_follow("test_username1");
   FollowReply follow_reply;
-  Status status = warble_service->Follow(&follow_request,
+  Status status = WarbleService::Follow(&follow_request,
                                         &follow_reply, kvclient);
   ASSERT_EQ(true, status.ok());
 }
@@ -63,7 +60,7 @@ TEST_F(WarbleServiceTest, ProfileStatusCheck) {
   ProfileRequest profile_request;
   profile_request.set_username("test_username");
   ProfileReply profile_reply;
-  Status status = warble_service->Profile(&profile_request, &profile_reply, kvclient);
+  Status status = WarbleService::Profile(&profile_request, &profile_reply, kvclient);
 
   ASSERT_EQ(true, status.ok());
 }
