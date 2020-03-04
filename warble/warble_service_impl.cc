@@ -25,6 +25,7 @@ using grpc::StatusCode;
 using kvstore::KeyValueClient;
 
 namespace warble {
+
 // Register users to backend store given non-blank username
 // If username already exists, return StatusCode::ALREADY_EXISTS
 Status WarbleService::RegisterUser(const RegisteruserRequest* request,

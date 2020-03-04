@@ -32,23 +32,23 @@ class WarbleService {
 public:
   // Register users to backend store given non-blank username
   // If username already exists, return StatusCode::ALREADY_EXISTS
-  Status RegisterUser(const RegisteruserRequest* request,
+  static Status RegisterUser(const RegisteruserRequest* request,
                             RegisteruserReply* reply,
                             KeyValueClient* kvclient);
   // Posts a new warble (optionally as a reply), returns the id of the new warble
-  Status WarbleMethod(const WarbleRequest* request,
+  static Status WarbleMethod(const WarbleRequest* request,
                             WarbleReply* reply,
                             KeyValueClient* kvclient);
   // Starts following a given user;
-  Status Follow(const FollowRequest* request,
+  static Status Follow(const FollowRequest* request,
                       FollowReply* reply,
                       KeyValueClient* kvclient);
   // Reads a warble thread from the given id
-  Status Read(const ReadRequest* request, 
+  static Status Read(const ReadRequest* request, 
                     ReadReply* reply,
                     KeyValueClient* kvclient);
   // Returns this user’s following and followers
-  Status Profile(const ProfileRequest* request,
+  static Status Profile(const ProfileRequest* request,
                        ProfileReply* reply,
                        KeyValueClient* kvclient);
 };
