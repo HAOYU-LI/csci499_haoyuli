@@ -37,8 +37,18 @@ message EventReply {
   google.protobuf.Any payload = 1;
 }
 
+// Query corresponding event_function from func server for given event_type.
+message QueryRequest {
+  int32 event_type = 1;
+}
+
+message QueryReply {
+  string event_function = 1;
+}
+
 service FuncService {
   rpc hook (HookRequest) returns (HookReply) {}
   rpc unhook (UnhookRequest) returns (UnhookReply) {}
   rpc event (EventRequest) returns (EventReply) {}
+  rpc query (QueryRequest) returns (QueryReply) {}
 }

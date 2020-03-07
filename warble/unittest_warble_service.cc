@@ -8,6 +8,7 @@
 using warble::WarbleService;
 using kvstore::KeyValueClient;
 using grpc::Status;
+using google::protobuf::Message;
 
 class WarbleServiceTest : public ::testing::Test {
 protected:
