@@ -49,7 +49,7 @@ std::vector<std::string>* KeyValueClient::Get(const std::vector<std::string>& ke
   // Create thread for writing request to server:
   std::thread writer([stream, keys]() {
   for (const std::string& key : keys) {
-    LOG(INFO) << "Querying " << key << " from key value store server" << std::endl;
+    LOG(INFO) << "[key_value_client] Querying " << key << " from key value server." << std::endl;
     GetRequest request;
     request.set_key(key); 
     stream->Write(request);
@@ -61,17 +61,18 @@ std::vector<std::string>* KeyValueClient::Get(const std::vector<std::string>& ke
   GetReply reply;
   std::vector<std::string>* result = new std::vector<std::string>();
   while (stream->Read(&reply)) {
-    LOG(INFO) << "Get reply " << reply.value() << " from server" << std::endl;
+    LOG(INFO) << "[key_value_client] Get reply " << reply.value() << " from key value server" << std::endl;
     result->push_back(reply.value());
   }
 
   writer.join();
   Status status = stream->Finish();
   if (!status.ok()) {
-    LOG(ERROR) << "get rpc failed. Key is not found." << std::endl;
-    return result;
+    LOG(INFO) << "[key_value_client] Key is not found." << std::endl;
+    return nullptr;
   }
-  LOG(INFO) << "get rpc succeed." << std::endl;
+
+  LOG(INFO) << "[key_value_client] Get rpc succeed." << std::endl;
   return result;
 }
 

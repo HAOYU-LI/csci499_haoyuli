@@ -47,3 +47,23 @@ add_custom_command(
 # Include generated *.pb.h files
 include_directories("${DIST_DIR}")
 
+
+# Generate target executable
+add_executable(func_service_impl func_service_impl.cc
+    func_service_impl.h
+    ../key_value_store/key_value_client.cc
+    ../key_value_store/key_value_store.pb.cc
+    ../key_value_store/key_value_store.grpc.pb.cc
+    ../warble/warble_service.pb.cc
+    ../warble/warble_service_impl.cc
+    ${func_proto_srcs}
+    ${func_grpc_srcs})
+
+target_link_libraries(func_service_impl
+    ${_GRPC_GRPCPP_UNSECURE}
+    ${_PROTOBUF_LIBPROTOBUF}
+    gRPC::grpc++
+    glog::glog)
+
+target_compile_features(func_service_impl PRIVATE cxx_std_17)
+

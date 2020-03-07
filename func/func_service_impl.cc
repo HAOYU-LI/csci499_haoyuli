@@ -1,41 +1,138 @@
 #include "func_service_impl.h"
 
-#include "func_service.pb.h"
-#include "func_service.grpc.pb.h"
-
-using func::HookRequest;
-using func::HookReply;
-using func::UnhookRequest;
-using func::UnhookReply;
-using func::EventRequest;
-using func::EventReply;
-using grpc::Server;
-using grpc::ServerContext;
-using grpc::ServerReaderWriter;
-using grpc::Status;
-using grpc::StatusCode;
-
 namespace func {
+
+Status RegisterUser(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
+  //WarbleService warble_service;
+  RegisteruserRequest request;
+  RegisteruserReply reply;
+  wrapper.request.UnpackTo(&request);
+  wrapper.reply.UnpackTo(&reply);
+  //return warble_service.RegisterUser(&request, &reply, kvclient);
+  return WarbleService::RegisterUser(&request, &reply, kvclient);
+}
+
+Status WarbleMethod(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
+  //WarbleService warble_service;
+  WarbleRequest request;
+  WarbleReply reply;
+  wrapper.request.UnpackTo(&request);
+  wrapper.reply.UnpackTo(&reply);
+  //return warble_service.WarbleMethod(&request, &reply, kvclient);
+  return WarbleService::WarbleMethod(&request, &reply, kvclient);
+}
+
+Status Follow(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
+  //WarbleService warble_service;
+  FollowRequest request;
+  FollowReply reply;
+  wrapper.request.UnpackTo(&request);
+  wrapper.reply.UnpackTo(&reply);
+  //return warble_service.Follow(&request, &reply, kvclient);
+  return WarbleService::Follow(&request, &reply, kvclient);
+}
+
+Status Read(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
+  //WarbleService warble_service;
+  ReadRequest request;
+  ReadReply reply;
+  wrapper.request.UnpackTo(&request);
+  wrapper.reply.UnpackTo(&reply);
+  //return warble_service.Read(&request, &reply, kvclient);
+  return WarbleService::Read(&request, &reply, kvclient);
+}
+
+Status Profile(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
+  //WarbleService warble_service;
+  ProfileRequest request;
+  ProfileReply reply;
+  wrapper.request.UnpackTo(&request);
+  wrapper.reply.UnpackTo(&reply);
+  //return warble_service.Profile(&request, &reply, kvclient);
+  return WarbleService::Profile(&request, &reply, kvclient);
+}
+
+FuncServiceImpl::FuncServiceImpl() {
+
+  kvclient = new KeyValueClient(grpc::CreateChannel("0.0.0.0:50001",
+                           grpc::InsecureChannelCredentials()));
+  name_method_map_["registeruser"] = std::function<
+                                       Status(RequestReplyWrapper,
+                                              kvstore::KeyValueClient*)>(RegisterUser);
+  name_method_map_["warble"] = std::function<
+                                       Status(RequestReplyWrapper,
+                                              kvstore::KeyValueClient*)>(WarbleMethod);  
+  name_method_map_["follow"] = std::function<
+                                       Status(RequestReplyWrapper,
+                                              kvstore::KeyValueClient*)>(Follow);                                                                   
+  name_method_map_["read"] = std::function<
+                                       Status(RequestReplyWrapper,
+                                              kvstore::KeyValueClient*)>(Read);
+  name_method_map_["profile"] = std::function<
+                                       Status(RequestReplyWrapper,
+                                              kvstore::KeyValueClient*)>(Profile);
+}
+
 // The hook method Intended to allow a service (not a user) to specify that 
 // a certain piece of code (a specific function) should be used 
 // to process messages of a specific type.  
 Status FuncServiceImpl::hook(ServerContext* context, 
-	           const HookRequest* request, HookReply* response) {
-	// To be done
+             const HookRequest* request, HookReply* response) {
+  std::lock_guard<std::mutex> lock(func_mutex_);
+  int event_type = request->event_type();
+  std:string event_function = request->event_function();
+  if (name_method_map_.find(event_function) == name_method_map_.end()) {
+    LOG(INFO) << "[func_service] event_function doesn't match any existing function. " << 
+                 "Possible choices are registeruser; warble; follow; read; profile"    << std::endl;
+    return Status(StatusCode::NOT_FOUND, "event_function doesn't match any existing function.");
+  }
+  hook_map_[event_type] = event_function;
+  return Status::OK;
 }
+
 // The unhook method Intended to remove relationship between
 // a specific type and a certain piece of code.
 Status FuncServiceImpl::unhook(ServerContext* context, 
-	           const UnhookRequest* request, UnhookReply* response) {
-	// To be done
+             const UnhookRequest* request, UnhookReply* response) {
+  std::lock_guard<std::mutex> lock(func_mutex_);
+  int event_type = request->event_type();
+  hook_map_.erase(event_type);
+  return Status::OK;
 }
+
 // The event method is responsible for executing the given function 
 // that was hooked previously for that type of event and responding 
 // with the appropriate reply message  (if there exists a hooked function 
 // to process that type of event -- if not, throw an error).
 Status FuncServiceImpl::event(ServerContext* context, 
-	           const EventRequest* request, EventReply* response) {
+             const EventRequest* request, EventReply* response) {
   // To be done
+  int event_type = request->event_type();
+  if (hook_map_.find(event_type) == hook_map_.end()) {
+    LOG(INFO) << "[func_service] event_type is not hooked with any method." << std::endl;
+    return Status(StatusCode::NOT_FOUND, "event_type is not hooked with any method.");
+  }
+  std::string event_function = hook_map_[event_type];
+  google::protobuf::Any function_request = request->payload();
+  google::protobuf::Any function_reply = response->payload();
+  RequestReplyWrapper function_param_wrapper = {function_request, function_reply};
+  
+  return name_method_map_[event_function](function_param_wrapper, kvclient);
 }
 
 }// End of func namespace
+
+int main(int argc, char** argv) {
+  google::InitGoogleLogging(argv[0]);
+  string func_server_address("0.0.0.0:50000");
+  ServerBuilder serverbuilder;
+  func::FuncServiceImpl Func_server;
+  serverbuilder.AddListeningPort(func_server_address, 
+                            grpc::InsecureServerCredentials());
+  serverbuilder.RegisterService(&Func_server);
+  std::unique_ptr<Server> server(serverbuilder.BuildAndStart());
+  std::cout<<"func server is listening on port : "<<func_server_address<<std::endl;
+  server->Wait();
+
+  return 0;
+}

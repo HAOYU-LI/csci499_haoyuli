@@ -1,13 +1,18 @@
 .DS_Store
+*/.idea/*
+.idea/*
 protos/.DS_Store
 # CmakeFiles are ignored in git commit
 key_value_store/CMakeFiles/*
 key_value_store/--grpc_out
 key_value_store/CMakeCache.txt
 key_value_store/cmake_install.cmake
-key_value_store/.pb.cc
-key_value_store/.pb.h
 key_value_store/Makefile
+key_value_store/*.pb.cc
+key_value_store/*.pb.h
+key_value_store/*.grpc.pb.*
+key_value_store/cmake-build-debug/*
+key_value_store/libkey_value_data_structure.a
 
 # Files in func folder
 func/CMakeCache.txt

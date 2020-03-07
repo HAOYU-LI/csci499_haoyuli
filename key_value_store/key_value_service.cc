@@ -38,18 +38,18 @@ Status KeyValueStoreImpl::get(ServerContext* context,
   GetRequest request;
   while (stream->Read(&request)) {
     string request_key = request.key();
-    LOG(INFO) << "received key : " << request_key << std::endl;
-    const vector<string>* values = storage_.Get(request_key);
-    if (values == nullptr) {
-      LOG(INFO) << "Key is not found." << std::endl;
+    LOG(INFO) << "[key_value_server] Received key : " << request_key << std::endl;
+    const vector<string>& values = storage_.Get(request_key);
+    if (values.size() == 0) {
+      LOG(INFO) << "[key_value_server] Key is not found." << std::endl;
       return Status(StatusCode::NOT_FOUND, "Key is not found.");
     }
-    for (auto value : (*values)) {
+    for (std::string value : values) {
       GetReply reply;
       reply.set_value(value);
       stream->Write(reply);
     }
-    LOG(INFO) << "end of writing reply." << std::endl;
+    LOG(INFO) << "[key_value_server] End of writing reply." << std::endl;
   }
   return Status::OK;
 }
