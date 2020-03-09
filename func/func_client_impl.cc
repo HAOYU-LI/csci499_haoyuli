@@ -43,19 +43,19 @@ namespace func {
     std::string function_name = query_reply.event_function();
 
     if (function_name.compare(FuncClientImpl::REGISTER) == 0) {
-      return doRegister(event_type, client_event_params, client_event_reply);
+      return RegisterHelper(event_type, client_event_params, client_event_reply);
     }
     if (function_name.compare(FuncClientImpl::WARBLE) == 0) {
-      return doWarble(event_type, client_event_params, client_event_reply);
+      return WarbleHelper(event_type, client_event_params, client_event_reply);
     }
     if (function_name.compare(FuncClientImpl::FOLLOW) == 0) {
-      return doFollow(event_type, client_event_params, client_event_reply);
+      return FollowHelper(event_type, client_event_params, client_event_reply);
     }
     if (function_name.compare(FuncClientImpl::READ) == 0) {
-      return doRead(event_type, client_event_params, client_event_reply);
+      return ReadHelper(event_type, client_event_params, client_event_reply);
     }
     if (function_name.compare(FuncClientImpl::PROFILE) == 0) {
-      return doProfile(event_type, client_event_params, client_event_reply);
+      return ProfileHelper(event_type, client_event_params, client_event_reply);
     }
 
     return false;
