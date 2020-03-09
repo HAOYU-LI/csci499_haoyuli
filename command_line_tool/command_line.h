@@ -7,6 +7,7 @@
 #include <grpcpp/grpcpp.h>
 
 #include "../func/func_client_impl.h"
+#include "command_line_helper.h"
 
 using func::ClientEventParams;
 using func::ClientEventReply;
@@ -18,6 +19,7 @@ using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
 using grpc::StatusCode;
+using commandhelper::PrintWarble;
 
 namespace commandline {
 /*
@@ -32,24 +34,30 @@ public:
   ~CommandLineClient() { delete func_client; }
   
   // Handle user registration call
-  Status RegisterHandler(std::string username);
+  bool RegisterHandler(std::string username);
 
   // Handle warble call from command line. If warble_id is not empty, warble is a reply warble. 
-  Status WarbleHandler(std::string username, std::string warble_text, std::warble_id = "");
+  bool WarbleHandler(std::string username, std::string warble_text, std::warble_id = "");
 
   // Handle follow request from command line.
-  Status FollowHandler(std::string username, std::string username_to_follow);
+  bool FollowHandler(std::string username, std::string username_to_follow);
 
   // Handle read request from command line.
-  Status ReadHandler(std::string username, std::string warble_id);
+  bool ReadHandler(std::string username, std::string warble_id);
 
   // Handle profile request from command line.
-  Status ProfileHandler(std::string username);
+  bool ProfileHandler(std::string username);
 
 private:
   FuncClientImpl* func_client;
+
+  const static int REGISTER_TYPE { 0 };
+  const static int WARBLE_TYPE { 1 };
+  const static int FOLLOW_TYPE { 2 };
+  const static int READ_TYPE { 3 };
+  const static int PROFILE_TYPE { 4 };
 };
 
-}
+} // namespace commandline
 
 #endif
