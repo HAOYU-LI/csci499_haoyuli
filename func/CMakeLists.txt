@@ -65,23 +65,5 @@ target_link_libraries(func_service_impl
     gRPC::grpc++
     glog::glog)
 
-# Generate target executable for func_client
-#add_executable(func_client_impl func_client_impl.cc
-#    func_client_impl.h
-#    ../warble/warble_service.pb.cc
-#    ../warble/warble_service_impl.cc
-#    ../key_value_store/key_value_client.cc
-#    ../key_value_store/key_value_store.pb.cc
-#    ../key_value_store/key_value_store.grpc.pb.cc
-#    ${func_proto_srcs}
-#    ${func_grpc_srcs})
-
-#target_link_libraries(func_client_impl
-#    ${_GRPC_GRPCPP_UNSECURE}
-#    ${_PROTOBUF_LIBPROTOBUF}
-#   gRPC::grpc++
-#    glog::glog)
 
 target_compile_features(func_service_impl PRIVATE cxx_std_17)
-#target_compile_features(func_client_impl PRIVATE cxx_std_17)
-

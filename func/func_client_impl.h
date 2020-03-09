@@ -38,8 +38,8 @@ struct ClientEventParams {
 };
 
 struct ClientEventReply {
-	 Warble warble;
-	 std::vector<Warble> warble_threads;
+  Warble warble;
+  std::vector<Warble> warble_threads;
   std::vector<std::string> following;
   std::vector<std::string> followers;
 };
@@ -53,40 +53,40 @@ public:
     : stub_(FuncService::NewStub(channel)) {}
   
   // hook method is used to combine event type with specific handler function name.
-  bool hook(int event_type, std::string function_name);
+  bool Hook(int event_type, std::string function_name);
   
   // unhook method intends to remove the relationship between
   // event type and function name.
-  bool unhook(int event_type);
+  bool Unhook(int event_type);
 
   // event method is responsible for calling function with given event type 
-  bool event(int event_type, ClientEventParams& event_params, 
-  	          ClientEventReply& client_event_reply);
+  bool Event(int event_type, ClientEventParams& event_params, 
+              ClientEventReply& client_event_reply);
 
 private:
   std::unique_ptr<FuncService::Stub> stub_;
-  const static std::string REGISTER;
-  const static std::string WARBLE;
-  const static std::string FOLLOW;
-  const static std::string READ;
-  const static std::string PROFILE;
-
-  bool doRegister(int event_type,
-  	               ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
-
-  bool doWarble(int event_type,
-  	             ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
-
-  bool doFollow(int event_type,
-  	             ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
-
-  bool doRead(int event_type,
-  	           ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
-
-  bool doProfile(int event_type,
-  	              ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
+  const static std::string REGISTER { "registeruser" };
+  const static std::string WARBLE { "warble" };
+  const static std::string FOLLOW { "follow" };
+  const static std::string READ { "read" };
+  const static std::string PROFILE { "profile" };
+  
+  // Wrapper function for Register call in warble service.
+  bool RegisterHelper(int event_type,
+                   ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
+  // Wrapper function for Warble call in warble service.
+  bool WarbleHelper(int event_type,
+                 ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
+  // Wrapper function for Follow call in warble service.
+  bool FollowHelper(int event_type,
+                 ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
+  // Wrapper function for Read call in warble service.
+  bool ReadHelper(int event_type,
+               ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
+  // Wrapper function for Profile call in warble service.
+  bool ProfileHelper(int event_type,
+                  ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
 };
-
 }// namespace func
 
 

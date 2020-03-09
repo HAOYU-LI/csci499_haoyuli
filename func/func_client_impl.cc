@@ -3,13 +3,8 @@
 #include <iostream>
 
 namespace func {
-	 const std::string FuncClientImpl::REGISTER = "registeruser";
-  const std::string FuncClientImpl::WARBLE = "warble";
-  const std::string FuncClientImpl::FOLLOW = "follow";
-  const std::string FuncClientImpl::READ = "read";
-  const std::string FuncClientImpl::PROFILE = "profile";
-	 // hook method is used to combine event type with specific handler function name.
-  bool FuncClientImpl::hook(int event_type, std::string function_name) {
+  // hook method is used to combine event type with specific handler function name.
+  bool FuncClientImpl::Hook(int event_type, std::string function_name) {
     HookRequest request;
     HookReply reply;
     ClientContext context;
@@ -22,7 +17,7 @@ namespace func {
 
   // unhook method intends to remove the relationship between
   // event type and function name.
-  bool FuncClientImpl::unhook(int event_type) {
+  bool FuncClientImpl::Unhook(int event_type) {
     UnhookRequest request;
     UnhookReply reply;
     ClientContext context;
@@ -33,7 +28,7 @@ namespace func {
   }
 
   // event method is responsible for calling function with given event type 
-  bool FuncClientImpl::event(int event_type, ClientEventParams& client_event_params,
+  bool FuncClientImpl::Event(int event_type, ClientEventParams& client_event_params,
   	                          ClientEventReply& client_event_reply) {
     QueryRequest query_request;
     QueryReply query_reply;
@@ -66,7 +61,7 @@ namespace func {
     return false;
   }
 
-  bool FuncClientImpl::doRegister(int event_type,
+  bool FuncClientImpl::RegisterHelper(int event_type,
   	                 ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
     EventReply event_reply;
@@ -87,7 +82,7 @@ namespace func {
     return status.ok();
   }
 
-  bool FuncClientImpl::doWarble(int event_type,
+  bool FuncClientImpl::WarbleHelper(int event_type,
   	               ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
     EventReply event_reply;
@@ -115,7 +110,7 @@ namespace func {
     return status.ok();
   }
 
-  bool FuncClientImpl::doFollow(int event_type,
+  bool FuncClientImpl::FollowHelper(int event_type,
   	               ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
     EventReply event_reply;
@@ -138,7 +133,7 @@ namespace func {
     return status.ok();
   }
 
-  bool FuncClientImpl::doRead(int event_type,
+  bool FuncClientImpl::ReadHelper(int event_type,
   	             ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
     EventReply event_reply;
@@ -164,7 +159,7 @@ namespace func {
     return status.ok();
   }
 
-  bool FuncClientImpl::doProfile(int event_type,
+  bool FuncClientImpl::ProfileHelper(int event_type,
   	                ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
     EventReply event_reply;
@@ -195,41 +190,3 @@ namespace func {
   }
 
 }// namespace func
-
-// int main() {
-
-//   func::FuncClientImpl* func_client = new func::FuncClientImpl(grpc::CreateChannel("0.0.0.0:50000",
-//                            grpc::InsecureChannelCredentials()));
-
-//   // hook type with function;
-//   func_client->hook(0, "registeruser");
-//   func_client->hook(1, "warble");
-//   func_client->hook(2, "follow");
-//   func_client->hook(3, "read");
-//   func_client->hook(4, "profile");
-
-//   // post warble:
-//   func::ClientEventParams params;
-//   func::ClientEventReply reply;
-//   params.username = "hyli";
-//   params.to_follow = "LBJ";
-//   params.warble_text = "play basketball";
-//   func_client->event(1, params, reply);
-//   std::cout << "username is : " << reply.warble.username() << std::endl;
-//   std::cout << "test is : " << reply.warble.text() << std::endl;
-//   std::cout << "warble id is : " << reply.warble.id() << std::endl;
-  
-//   //Read warble:
-//   params.warble_id = reply.warble.id();
-//   func_client->event(3, params, reply);
-//   std::cout << "warble threads length = " << reply.warble_threads.size() << std::endl;
-//   std::cout<< "warble threads contains : " << std::endl;
-//   std::cout << "username is : " << reply.warble_threads[0].username() << std::endl;
-//   std::cout << "text is : " << reply.warble_threads[0].text() << std::endl;
-//   std::cout << "warble id is : " << reply.warble_threads[0].id() << std::endl;
-//   std::cout << "Timestamp is : " << reply.warble_threads[0].timestamp().seconds() << std::endl;
-
-// }
-
-
-
