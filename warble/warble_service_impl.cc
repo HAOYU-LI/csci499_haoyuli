@@ -61,8 +61,10 @@ Status WarbleService::WarbleMethod(const WarbleRequest* request,
   timestamp->set_useconds((int64_t) tv.tv_usec);
   // Warble id will be serialized warble message
   // (username, text, parent_id, timestamp) without id.
-  std::string warble_id;
-  warble_to_reply->SerializeToString(&warble_id);
+  std::string serialized_warble_id;
+  warble_to_reply->SerializeToString(&serialized_warble_id);
+  std::size_t hashed_warble_id = std::hash<std::string>{}(serialized_warble_id);
+  std::string warble_id = std::to_string(hashed_warble_id);
   warble_to_reply->set_id(warble_id);
   // Save warble into kvstore.
   std::string serialized_warble;
