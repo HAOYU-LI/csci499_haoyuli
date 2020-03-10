@@ -48,7 +48,7 @@ add_custom_command(
 include_directories("${DIST_DIR}")
 
 
-# Generate target executable
+# Generate target executable for func_service
 add_executable(func_service_impl func_service_impl.cc
     func_service_impl.h
     ../key_value_store/key_value_client.cc
@@ -65,5 +65,5 @@ target_link_libraries(func_service_impl
     gRPC::grpc++
     glog::glog)
 
-target_compile_features(func_service_impl PRIVATE cxx_std_17)
 
+target_compile_features(func_service_impl PRIVATE cxx_std_17)

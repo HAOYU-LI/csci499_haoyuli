@@ -22,7 +22,6 @@ using grpc::ServerReaderWriter;
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
-using grpc::Status;
 using grpc::StatusCode;
 
 namespace kvstore {

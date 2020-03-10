@@ -22,6 +22,8 @@ using func::UnhookRequest;
 using func::UnhookReply;
 using func::EventRequest;
 using func::EventReply;
+using func::QueryRequest;
+using func::QueryReply;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -33,8 +35,8 @@ using warble::WarbleService;
 namespace func {
 
 struct RequestReplyWrapper {
-  google::protobuf::Any request;
-  google::protobuf::Any reply;
+  google::protobuf::Any& request;
+  google::protobuf::Any& reply;
 };
 
 class FuncServiceImpl final : public FuncService::Service {
@@ -58,12 +60,16 @@ public:
   // to process that type of event -- if not, throw an error).
   Status event(ServerContext* context, 
                const EventRequest* request, EventReply* response) override;
+  
+  // Query corresponding event_function from func server for given event_type.
+  Status query(ServerContext* context,
+               const QueryRequest* request, QueryReply* response) override;
 private:
   std::mutex func_mutex_;
   kvstore::KeyValueClient* kvclient;
   std::unordered_map<int, std::string> hook_map_;
   std::unordered_map<std::string, std::function<
-                                       Status(RequestReplyWrapper,kvstore::KeyValueClient*)>> 
+                                       Status(RequestReplyWrapper&,kvstore::KeyValueClient*)>> 
                                        name_method_map_;
 };
 }// End of func namespace

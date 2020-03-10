@@ -2,54 +2,49 @@
 
 namespace func {
 
-Status RegisterUser(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
-  //WarbleService warble_service;
+Status RegisterUser(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   RegisteruserRequest request;
   RegisteruserReply reply;
   wrapper.request.UnpackTo(&request);
-  wrapper.reply.UnpackTo(&reply);
-  //return warble_service.RegisterUser(&request, &reply, kvclient);
-  return WarbleService::RegisterUser(&request, &reply, kvclient);
+  Status status = WarbleService::RegisterUser(&request, &reply, kvclient);
+  wrapper.reply.PackFrom(reply);
+  return status;
 }
 
-Status WarbleMethod(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
-  //WarbleService warble_service;
+Status WarbleMethod(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   WarbleRequest request;
   WarbleReply reply;
   wrapper.request.UnpackTo(&request);
-  wrapper.reply.UnpackTo(&reply);
-  //return warble_service.WarbleMethod(&request, &reply, kvclient);
-  return WarbleService::WarbleMethod(&request, &reply, kvclient);
+  Status status = WarbleService::WarbleMethod(&request, &reply, kvclient);
+  wrapper.reply.PackFrom(reply);
+  return status;
 }
 
-Status Follow(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
-  //WarbleService warble_service;
+Status Follow(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   FollowRequest request;
   FollowReply reply;
   wrapper.request.UnpackTo(&request);
-  wrapper.reply.UnpackTo(&reply);
-  //return warble_service.Follow(&request, &reply, kvclient);
-  return WarbleService::Follow(&request, &reply, kvclient);
+  Status status = WarbleService::Follow(&request, &reply, kvclient);
+  wrapper.reply.PackFrom(reply);
+  return status;
 }
 
-Status Read(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
-  //WarbleService warble_service;
+Status Read(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   ReadRequest request;
   ReadReply reply;
   wrapper.request.UnpackTo(&request);
-  wrapper.reply.UnpackTo(&reply);
-  //return warble_service.Read(&request, &reply, kvclient);
-  return WarbleService::Read(&request, &reply, kvclient);
+  Status status = WarbleService::Read(&request, &reply, kvclient);
+  wrapper.reply.PackFrom(reply);
+  return status;
 }
 
-Status Profile(RequestReplyWrapper wrapper, KeyValueClient* kvclient) {
-  //WarbleService warble_service;
+Status Profile(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   ProfileRequest request;
   ProfileReply reply;
   wrapper.request.UnpackTo(&request);
-  wrapper.reply.UnpackTo(&reply);
-  //return warble_service.Profile(&request, &reply, kvclient);
-  return WarbleService::Profile(&request, &reply, kvclient);
+  Status status = WarbleService::Profile(&request, &reply, kvclient);
+  wrapper.reply.PackFrom(reply);
+  return status;
 }
 
 FuncServiceImpl::FuncServiceImpl() {
@@ -57,19 +52,19 @@ FuncServiceImpl::FuncServiceImpl() {
   kvclient = new KeyValueClient(grpc::CreateChannel("0.0.0.0:50001",
                            grpc::InsecureChannelCredentials()));
   name_method_map_["registeruser"] = std::function<
-                                       Status(RequestReplyWrapper,
+                                       Status(RequestReplyWrapper&,
                                               kvstore::KeyValueClient*)>(RegisterUser);
   name_method_map_["warble"] = std::function<
-                                       Status(RequestReplyWrapper,
+                                       Status(RequestReplyWrapper&,
                                               kvstore::KeyValueClient*)>(WarbleMethod);  
   name_method_map_["follow"] = std::function<
-                                       Status(RequestReplyWrapper,
+                                       Status(RequestReplyWrapper&,
                                               kvstore::KeyValueClient*)>(Follow);                                                                   
   name_method_map_["read"] = std::function<
-                                       Status(RequestReplyWrapper,
+                                       Status(RequestReplyWrapper&,
                                               kvstore::KeyValueClient*)>(Read);
   name_method_map_["profile"] = std::function<
-                                       Status(RequestReplyWrapper,
+                                       Status(RequestReplyWrapper&,
                                               kvstore::KeyValueClient*)>(Profile);
 }
 
@@ -114,10 +109,24 @@ Status FuncServiceImpl::event(ServerContext* context,
   }
   std::string event_function = hook_map_[event_type];
   google::protobuf::Any function_request = request->payload();
-  google::protobuf::Any function_reply = response->payload();
+  google::protobuf::Any function_reply;
   RequestReplyWrapper function_param_wrapper = {function_request, function_reply};
+  Status status = name_method_map_[event_function](function_param_wrapper, kvclient);
+  response->mutable_payload()->google::protobuf::Any::MergeFrom(function_reply);
+
+  return status;
+}
+
+Status FuncServiceImpl::query(ServerContext* context,
+               const QueryRequest* request, QueryReply* response) {
+  int event_type = request->event_type();
+  if (hook_map_.find(event_type) == hook_map_.end()) {
+    LOG(INFO) << "[func_service] event_type is not hooked with any method." << std::endl;
+    return Status(StatusCode::NOT_FOUND, "event_type is not hooked with any method.");
+  }
   
-  return name_method_map_[event_function](function_param_wrapper, kvclient);
+  response->set_event_function(hook_map_[event_type]);
+  return Status::OK;
 }
 
 }// End of func namespace

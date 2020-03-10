@@ -116,12 +116,15 @@ Status WarbleService::Read(const ReadRequest* request,
     return Status(StatusCode::NOT_FOUND, "Warble_id is not found.");
   }
   // Iterate serialized warble strings and parse them back to warble.
-  for (const std::string serialized_warble : (*serialized_warbles)) {
+  while (serialized_warbles != nullptr && serialized_warbles->size() == 1) {
     Warble* new_warble = reply->add_warbles();
-    new_warble->ParseFromString(serialized_warble);
+    new_warble->ParseFromString((*serialized_warbles)[0]);
+    warble_id = new_warble->parent_id();
+    std::vector<std::string> key{warble_id};
+    delete serialized_warbles;
+    serialized_warbles = kvclient->Get(key);
   }
   
-  delete serialized_warbles;
   return Status::OK;
 }
 
