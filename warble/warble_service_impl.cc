@@ -48,6 +48,12 @@ Status WarbleService::RegisterUser(const RegisteruserRequest* request,
 Status WarbleService::WarbleMethod(const WarbleRequest* request,
                              WarbleReply* reply,
                              KeyValueClient* kvclient) {
+  // Check whether user exists in database:
+  std::vector<std::string> user_existence_key{"user_" + request->username()};
+  std::vector<std::string>* user_existence_value = kvclient->Get(user_existence_key);
+  if (user_existence_value == nullptr) {
+    return Status(StatusCode::NOT_FOUND, "User does not exist in database");
+  }
   // Store WarbleRequest into a warble.
   Warble* warble_to_reply = reply->mutable_warble();
   warble_to_reply->set_username(request->username());
@@ -83,6 +89,15 @@ Status WarbleService::Follow(const FollowRequest* request,
   std::string username_to_follow = request->to_follow();
   std::string username_to_follow_key = "followed_by_" + username_to_follow;
 
+  // Check whether user and user_to_follow exist in current database:
+  std::vector<std::string> user_existence_key{"user_" + username};
+  std::vector<std::string> username_to_follow_existence_key{"user_" + username_to_follow};
+  std::vector<std::string>* user_existence_value = kvclient->Get(user_existence_key);
+  std::vector<std::string>* username_to_follow_existence_value = kvclient->Get(username_to_follow_existence_key);
+  if (user_existence_value == nullptr || username_to_follow_existence_value == nullptr) {
+    return Status(StatusCode::NOT_FOUND, "User or User_to_follow does not exist in database");
+  }
+
   kvclient->Put(username_key, username_to_follow);
   kvclient->Put(username_to_follow_key, username);
   
@@ -115,6 +130,13 @@ Status WarbleService::Profile(const ProfileRequest* request,
                               ProfileReply* reply,
                               KeyValueClient* kvclient) {
   std::string username = request->username();
+  // Check whether user exists in database
+  std::vector<std::string> user_existence_key{"user_" + username};
+  std::vector<std::string>* user_existence_value = kvclient->Get(user_existence_key);
+  if (user_existence_value == nullptr) {
+    return Status(StatusCode::NOT_FOUND, "User does not exist in database");
+  }
+  // Fetch following and followed user information
   const std::string username_following = "following_" + username;
   const std::string username_to_be_followed = "followed_by_" + username;
   std::vector<std::string> following_key{username_following};
