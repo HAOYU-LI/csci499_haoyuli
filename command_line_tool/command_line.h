@@ -11,7 +11,7 @@
 
 using func::ClientEventParams;
 using func::ClientEventReply;
-using func::FuncClientImpl
+using func::FuncClientImpl;
 using grpc::Server;
 using grpc::ServerContext;
 using grpc::ServerReaderWriter;
@@ -20,6 +20,19 @@ using grpc::ClientContext;
 using grpc::Status;
 using grpc::StatusCode;
 using commandhelper::PrintWarble;
+using commandhelper::PrintUser;
+using commandhelper::FlagOption;
+using commandhelper::ParseFlag;
+using commandhelper::PrintOptions;
+using commandhelper::REGISTER_FLAG;
+using commandhelper::USER_FLAG;
+using commandhelper::WARBLE_FLAG;
+using commandhelper::REPLY_FLAG;
+using commandhelper::FOLLOW_FLAG;
+using commandhelper::READ_FLAG;
+using commandhelper::PROFILE_FLAG;
+using commandhelper::OTHER_FLAG;
+
 
 namespace commandline {
 /*
@@ -37,7 +50,7 @@ public:
   bool RegisterHandler(std::string username);
 
   // Handle warble call from command line. If warble_id is not empty, warble is a reply warble. 
-  bool WarbleHandler(std::string username, std::string warble_text, std::warble_id = "");
+  bool WarbleHandler(std::string username, std::string warble_text, std::string warble_id = "");
 
   // Handle follow request from command line.
   bool FollowHandler(std::string username, std::string username_to_follow);

@@ -31,3 +31,10 @@ warble/Makefile
 warble/warble_service.pb.h
 warble/warble_service.pb.cc
 warble/CMakeFiles/*
+
+# Files in command-line-tool folder
+command_line_tool/CMakeCache.txt
+command_line_tool/CMakefiles/*
+command_line_tool/Makefile
+command_line_tool/cmake_install.cmake
+

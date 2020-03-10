@@ -65,11 +65,11 @@ public:
 
 private:
   std::unique_ptr<FuncService::Stub> stub_;
-  const static std::string REGISTER { "registeruser" };
-  const static std::string WARBLE { "warble" };
-  const static std::string FOLLOW { "follow" };
-  const static std::string READ { "read" };
-  const static std::string PROFILE { "profile" };
+  inline const static std::string REGISTER { "registeruser" };
+  inline const static std::string WARBLE { "warble" };
+  inline const static std::string FOLLOW { "follow" };
+  inline const static std::string READ { "read" };
+  inline const static std::string PROFILE { "profile" };
   
   // Wrapper function for Register call in warble service.
   bool RegisterHelper(int event_type,
