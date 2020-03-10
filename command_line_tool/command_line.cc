@@ -41,12 +41,12 @@ namespace commandline {
   // Handle warble call from command line. If warble_id is not empty, warble is a reply warble. 
   bool CommandLineClient::WarbleHandler(std::string username, 
                                         std::string warble_text, 
-                                        std::string warble_id) {
+                                        std::string parent_warble_id) {
     ClientEventParams event_params;
     ClientEventReply  event_reply;
     event_params.username = username;
     event_params.warble_text = warble_text;
-    event_params.warble_id = warble_id;
+    event_params.parent_warble_id = parent_warble_id;
     bool warble_result = func_client->Event(WARBLE_TYPE, event_params, event_reply);
     
     if (warble_result) {
@@ -65,9 +65,7 @@ namespace commandline {
     event_params.to_follow = username_to_follow;
     bool follow_result = func_client->Event(FOLLOW_TYPE, event_params, event_reply);
 
-    if (follow_result) {
-      PrintUser(username, event_reply.following, event_reply.followers);
-    } else {
+    if (!follow_result) {
       LOG(INFO) << "Follow request failed." << std::endl;
     }
     return follow_result;

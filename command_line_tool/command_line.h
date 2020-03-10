@@ -50,7 +50,7 @@ public:
   bool RegisterHandler(std::string username);
 
   // Handle warble call from command line. If warble_id is not empty, warble is a reply warble. 
-  bool WarbleHandler(std::string username, std::string warble_text, std::string warble_id = "");
+  bool WarbleHandler(std::string username, std::string warble_text, std::string parent_warble_id = "");
 
   // Handle follow request from command line.
   bool FollowHandler(std::string username, std::string username_to_follow);

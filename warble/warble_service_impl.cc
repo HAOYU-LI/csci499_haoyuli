@@ -119,7 +119,7 @@ Status WarbleService::Read(const ReadRequest* request,
   while (serialized_warbles != nullptr && serialized_warbles->size() == 1) {
     Warble* new_warble = reply->add_warbles();
     new_warble->ParseFromString((*serialized_warbles)[0]);
-    warble_id = new_warble->id();
+    warble_id = new_warble->parent_id();
     std::vector<std::string> key{warble_id};
     delete serialized_warbles;
     serialized_warbles = kvclient->Get(key);
