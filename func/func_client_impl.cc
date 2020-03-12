@@ -145,6 +145,7 @@ namespace func {
     ReadRequest read_request;
     ReadReply read_reply;
     read_request.set_warble_id(client_event_params.warble_id);
+    read_request.set_username(client_event_params.username);
 
     any_request.PackFrom(read_request);
     event_request.mutable_payload()->google::protobuf::Any::MergeFrom(any_request);

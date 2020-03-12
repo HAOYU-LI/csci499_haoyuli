@@ -109,6 +109,14 @@ Status WarbleService::Read(const ReadRequest* request,
                            ReadReply* reply,
                            KeyValueClient* kvclient) {
   std::string warble_id = request->warble_id();
+  std::string username = request->username();
+  // Check whether user exists in database
+  std::vector<std::string> user_existence_key{"user_" + username};
+  std::vector<std::string>* user_existence_value = kvclient->Get(user_existence_key);
+  if (user_existence_value == nullptr) {
+    return Status(StatusCode::NOT_FOUND, "User does not exist in database");
+  }
+  // Fetch warbles from backend store.
   std::vector<std::string> kvclient_key{warble_id};
   std::vector<std::string>* serialized_warbles = kvclient->Get(kvclient_key);
   if (serialized_warbles == nullptr) {

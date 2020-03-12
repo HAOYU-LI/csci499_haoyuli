@@ -84,12 +84,6 @@ namespace commandline {
       LOG(INFO) << "The warble with warble id : [" << warble_id << "] does not exist." << std::endl;
       return false;
     }
-    
-    bool not_posted_by_user = username.compare(event_reply.warble_threads[0].username()) != 0;
-    if (not_posted_by_user) {
-      LOG(INFO) << "The warble is not posted by user : " << username << std::endl;
-      return false;
-    }
 
     if (read_result) {
     	 LOG(INFO) << "Current warble thread with warble id : [" << warble_id << "] has following warbles." << std::endl;
