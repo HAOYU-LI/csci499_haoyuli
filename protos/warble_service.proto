@@ -45,6 +45,7 @@ message FollowReply {
 
 message ReadRequest {
   bytes warble_id = 1;  // The ID of the warble to start the read at.
+  string username = 2;
 }
 
 message ReadReply {
