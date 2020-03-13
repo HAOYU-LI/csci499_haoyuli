@@ -29,6 +29,8 @@ using grpc::Channel;
 using grpc::ClientContext;
 
 namespace func {
+// parameter structure that is used to store
+// general request information.
 struct ClientEventParams {
   std::string username;
   std::string to_follow;
@@ -37,6 +39,8 @@ struct ClientEventParams {
   std::string parent_warble_id;
 };
 
+// parameter structure that is used to store
+// general reply information.
 struct ClientEventReply {
   Warble warble;
   std::vector<Warble> warble_threads;

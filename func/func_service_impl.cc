@@ -1,7 +1,8 @@
 #include "func_service_impl.h"
 
 namespace func {
-
+// Wrapper method for registering user. Parse general Wrapper parameters
+// to specific request and reply.
 Status RegisterUser(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   RegisteruserRequest request;
   RegisteruserReply reply;
@@ -11,6 +12,8 @@ Status RegisterUser(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   return status;
 }
 
+// Wrapper method for posting warble. Parse general Wrapper parameters
+// to specific request and reply.
 Status WarbleMethod(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   WarbleRequest request;
   WarbleReply reply;
@@ -20,6 +23,8 @@ Status WarbleMethod(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   return status;
 }
 
+// Wrapper method for follow request. Parse general Wrapper parameters
+// to specific request and reply.
 Status Follow(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   FollowRequest request;
   FollowReply reply;
@@ -29,6 +34,8 @@ Status Follow(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   return status;
 }
 
+// Wrapper method for read request. Parse general Wrapper parameters
+// to specific request and reply.
 Status Read(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   ReadRequest request;
   ReadReply reply;
@@ -38,6 +45,8 @@ Status Read(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   return status;
 }
 
+// Wrapper method for querying user's profile. Parse general Wrapper parameters
+// to specific request and reply.
 Status Profile(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   ProfileRequest request;
   ProfileReply reply;
@@ -117,6 +126,7 @@ Status FuncServiceImpl::event(ServerContext* context,
   return status;
 }
 
+// Query corresponding event_function from func server for given event_type.
 Status FuncServiceImpl::query(ServerContext* context,
                const QueryRequest* request, QueryReply* response) {
   int event_type = request->event_type();

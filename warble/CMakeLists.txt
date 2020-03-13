@@ -39,20 +39,6 @@ add_custom_command(
         "${warble_proto}"
       DEPENDS ${warble_proto})
 
-# Generate target executable
-#add_executable(warble_service_impl warble_service_impl.cc
-#    warble_service_impl.h
-#    ../key_value_store/key_value_client.cc
-#    ../key_value_store/key_value_store.pb.cc
-#    ../key_value_store/key_value_store.grpc.pb.cc
-#    ${warble_proto_srcs})
-
-#target_link_libraries(warble_service_impl
-#    ${_GRPC_GRPCPP_UNSECURE}
-#    ${_PROTOBUF_LIBPROTOBUF}
-#    gRPC::grpc++
-#    glog::glog)
-
 # Include unit test:
 add_executable(unittest_warble_service unittest_warble_service.cc
     warble_service_impl.cc
