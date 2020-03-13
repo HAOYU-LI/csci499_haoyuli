@@ -5,21 +5,13 @@ This project builds a software infrastructure for a new Function-as-a-Service (F
 
 ## 1. Virual Environment Setup
 
-Install virtual environment if you are not using linux.
+Install virtual environment.
 ### 1.1. Download & Install Vagrant 
 
 Visit https://www.vagrantup.com/downloads.html to download and install vagrant(>= 2.2.6)
 
-### 1.2. Create virtual environment
-The commands below create a directory vagrant-env and a file Vagrantfile within the new directory.
-
-```sh
-$ cd ~/ && mkdir vagrant-env
-$ cd vagrant-env && vagrant init vagrant-csci499
-```
-
-### 1.3. Start virtual machine
-This command will start and login to the virtual machine.
+### 1.2. Start virtual machine
+After adding vagrant box. This command will start and login to the virtual machine.
 
 ```sh
 $ vagrant up && vagrant ssh
@@ -41,38 +33,24 @@ $ cd csci499_haoyuli
 $ mkdir third_party
 $ cd third_party
 ```
-### 2.2.1 Protocol Buffers(prerequisite of GRPC)
-```sh
-$ [sudo] apt-get install autoconf automake libtool curl make g++ unzip
-$ [sudo] git clone https://github.com/protocolbuffers/protobuf.git
-$ cd protobuf
-$ [sudo] git submodule update --init --recursive
-$ [sudo] ./autogen.sh
-$ ./configure
-$ [sudo] make
-$ [sudo] make check
-$ [sudo] make install
-$ [sudo] ldconfig # refresh shared library cache.
 
-```
-
-### 2.2.2 abseil-cpp(prerequisite of GRPC)
+### 2.2.1 CMake(prerequisite of GRPC)
 ```sh
-$ [sudo] git clone https://github.com/abseil/abseil-cpp.git
-$ cd abseil-cpp
-$ [sudo] cmake .
+$ wget https://cmake.org/files/v3.17/cmake-3.17.0-rc1.tar.gz
+$ tar cmake-3.17.0-rc1.tar.gz 
+$ cd cmake-3.17.0-rc1
+$ ./configure --prefix=/usr/local
 $ [sudo] make
 $ [sudo] make install
 $ cd ..
-```
+``` 
 
-### 2.2.3 GRPC
+### 2.2.2 GRPC
 
 ```sh
+$ cd csci499_haoyuli/third_party
 $ [sudo] apt-get update
-$ [sudo] apt-get install build-essential autoconf libtool pkg-config libc-ares-dev golang
-$ [sudo] apt-get install cmake
-$ [sudo] apt-get install libprotobuf-dev protobuf-compiler
+$ [sudo] apt-get install build-essential autoconf libtool pkg-config libc-ares-dev automake golang
 ```
 
 #### GRPC-Clone the repository (including submodules)
@@ -90,20 +68,19 @@ repository at the latest stable version.
 #### GPRC-Building with CMake
 
 In grpc repo
+
 ```sh
 $ mkdir -p cmake/build
 $ cd cmake/build
-$ [sudo] cmake -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DgRPC_ABSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release ../..
-$ [sudo] make -j4 install
-$ cd ../..
+$ [sudo] cmake ../..
 $ [sudo] make
-$ [sudo] make install
-$ cd ../
+$ cd ..
 ```
 
-### 2.2.4 glog
+### 2.2.3 glog
 
 ```sh
+$ cd csci499_haoyuli/third_party
 $ [sudo] git clone https://github.com/google/glog.git
 $ cd glog
 $ [sudo] ./autogen.sh
@@ -113,9 +90,10 @@ $ [sudo] make install
 $ cd ..
 ```
 
-### 2.2.5 googletest
+### 2.2.4 googletest
 
 ```sh
+$ cd csci499_haoyuli/third_party
 $ [sudo] git clone https://github.com/google/googletest.git
 cd googletest
 $ [sudo] cmake .
@@ -124,9 +102,10 @@ $ [sudo] make install
 $ cd ..
 ```
 
-### 2.2.6 gflags
+### 2.2.5 gflags
 
 ```sh
+$ cd csci499_haoyuli/third_party
 $ [sudo] git clone https://github.com/gflags/gflags.git
 $ [sudo] cmake .
 $ [sudo] make
@@ -168,9 +147,11 @@ $ cmake .
 $ make
 ```
 
-## 4. Sample execution
+## 4. Samples to run
+Go to command-line-tool repo
 
 ```sh
+$ cd command-line-tool
 $ ./warble --registeruser "user1" # Register a user called user1.
 $ ./warble --registeruser "user2" # Register a user called user2.
 $ ./warble --user "user1" --warble "hello from user1" # A warble is posted by user1
