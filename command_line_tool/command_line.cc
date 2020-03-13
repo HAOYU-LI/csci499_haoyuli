@@ -30,10 +30,10 @@ namespace commandline {
     bool register_result = func_client->Event(REGISTER_TYPE, event_params, event_reply);
     
     if (register_result) {
-      LOG(INFO) << "User " << username << " has been registered successfully."
+      std::cout << "User " << username << " has been registered successfully."
                 << std::endl;
     } else {
-      LOG(INFO) << "User " << username << " already exists." << std::endl;
+      std::cout << "User " << username << " already exists." << std::endl;
     }
     return register_result;
   }
@@ -52,7 +52,7 @@ namespace commandline {
     if (warble_result) {
       PrintWarble(event_reply.warble);
     } else {
-      LOG(INFO) << "This warble cannot be posted" << std::endl;
+      std::cout << "This warble cannot be posted" << std::endl;
     }
     return warble_result;
   }
@@ -66,7 +66,7 @@ namespace commandline {
     bool follow_result = func_client->Event(FOLLOW_TYPE, event_params, event_reply);
 
     if (!follow_result) {
-      LOG(INFO) << "Follow request failed." << std::endl;
+      std::cout << "Follow request failed." << std::endl;
     }
     return follow_result;
   }
@@ -81,16 +81,17 @@ namespace commandline {
     LOG(INFO) << "In command_line_client, return from Read call";
     bool no_warble_threads = event_reply.warble_threads.size() == 0;
     if (no_warble_threads) {
-      LOG(INFO) << "The warble with warble id : [" << warble_id << "] does not exist." << std::endl;
+      std::cout << "The warble with warble id : [" << warble_id << "] does not exist." << std::endl;
       return false;
     }
 
     if (read_result) {
-    	 LOG(INFO) << "Current warble thread with warble id : [" << warble_id << "] has following warbles." << std::endl;
-      for (Warble warble : event_reply.warble_threads) {
+    	 std::cout << "Current warble thread with warble id : [" << warble_id << "] has following warbles." << std::endl;
+      for (int i = event_reply.warble_threads.size() - 1; i >= 0; i --) {
+        Warble warble = event_reply.warble_threads[i];
         PrintWarble(warble);
       }
-      LOG(INFO) << "End of warble thread" << std::endl;
+      std::cout << "End of warble thread" << std::endl;
     }
 
     return read_result;
@@ -106,7 +107,7 @@ namespace commandline {
     if (profile_result) {
       PrintUser(username, event_reply.following, event_reply.followers);
     } else {
-      LOG(INFO) << "Current username does not exist in system" << std::endl;
+      std::cout << "Current username does not exist in system" << std::endl;
     }
 
     return profile_result;

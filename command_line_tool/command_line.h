@@ -1,6 +1,7 @@
 #ifndef COMMAND_LINE_H
 #define COMMAND_LINE_H
 #include <string>
+#include <iostream>
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
