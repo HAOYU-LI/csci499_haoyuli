@@ -2,6 +2,7 @@
 */.idea/*
 .idea/*
 protos/.DS_Store
+third_party/*
 # CmakeFiles are ignored in git commit
 key_value_store/CMakeFiles/*
 key_value_store/--grpc_out

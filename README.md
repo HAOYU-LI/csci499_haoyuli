@@ -1,46 +1,163 @@
 # csci499_haoyuli
 
+This project builds a software infrastructure for a new Function-as-a-Service (FaaS) platform called Func, and on top of Func we build the infrastructure for a social network platform we’ll call Warble.  Func is intended to provide a very basic FaaS platform like AWS Lambda or Google Cloud Functions, and Warble is intended to have the same basic functionality of Twitter.
 
-## Linux
+
+## 1. Virual Environment Setup
+
+Install virtual environment.
+### 1.1. Download & Install Vagrant 
+
+Visit https://www.vagrantup.com/downloads.html to download and install vagrant(>= 2.2.6)
+
+### 1.2. Start virtual machine
+After adding vagrant box. This command will start and login to the virtual machine.
 
 ```sh
- $ [sudo] apt-get install build-essential autoconf libtool pkg-config
+$ vagrant up && vagrant ssh
 ```
 
-If you plan to build using CMake
+## 2. Project Environment Setup
+
+### 2.1 Clone project to local
+
 ```sh
- $ [sudo] apt-get install cmake
+$ cd /vagrant
+$ git clone https://github.com/HAOYU-LI/csci499_haoyuli.git
 ```
 
-If you are a contributor and plan to build and run tests, install the following as well:
+### 2.2 Add third-party lib
+
 ```sh
- $ # libgflags-dev is only required if building with mpke (deprecated)
- $ [sudo] apt-get install libgflags-dev
- $ # clang and LLVM C++ lib is only required for sanitizer builds
- $ [sudo] apt-get install clang-5.0 libc++-dev
+$ cd csci499_haoyuli
+$ mkdir third_party
+$ cd third_party
 ```
 
-## Install gRPC
+### 2.2.1 CMake(prerequisite of GRPC)
+```sh
+$ wget https://cmake.org/files/v3.17/cmake-3.17.0-rc1.tar.gz
+$ tar cmake-3.17.0-rc1.tar.gz 
+$ cd cmake-3.17.0-rc1
+$ ./configure --prefix=/usr/local
+$ [sudo] make
+$ [sudo] make install
+$ cd ..
+``` 
 
-## Clone the repository (including submodules)
+### 2.2.2 GRPC
+
+```sh
+$ cd csci499_haoyuli/third_party
+$ [sudo] apt-get update
+$ [sudo] apt-get install build-essential autoconf libtool pkg-config libc-ares-dev automake golang
+```
+
+#### GRPC-Clone the repository (including submodules)
 
 Before building, you need to clone the gRPC github repository and download submodules containing source code
 for gRPC's dependencies (that's done by the `submodule` command or `--recursive` flag). The following commands will clone the gRPC
 repository at the latest stable version.
 
 ```sh
- $ git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+ $ [sudo] git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
  $ cd grpc
- $ git submodule update --init
+ $ [sudo] git submodule update --init
  ```
 
-## Building with CMake
+#### GPRC-Building with CMake
 
 In grpc repo
+
 ```sh
 $ mkdir -p cmake/build
 $ cd cmake/build
-$ cmake -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release ../..
-$ make -j4 install
+$ [sudo] cmake ../..
+$ [sudo] make
+$ cd ..
+```
+
+### 2.2.3 glog
+
+```sh
+$ cd csci499_haoyuli/third_party
+$ [sudo] git clone https://github.com/google/glog.git
+$ cd glog
+$ [sudo] ./autogen.sh
+$ [sudo] ./configure
+$ [sudo] make
+$ [sudo] make install
+$ cd ..
+```
+
+### 2.2.4 googletest
+
+```sh
+$ cd csci499_haoyuli/third_party
+$ [sudo] git clone https://github.com/google/googletest.git
+cd googletest
+$ [sudo] cmake .
+$ [sudo] make
+$ [sudo] make install
+$ cd ..
+```
+
+### 2.2.5 gflags
+
+```sh
+$ cd csci499_haoyuli/third_party
+$ [sudo] git clone https://github.com/gflags/gflags.git
+$ [sudo] cmake .
+$ [sudo] make
+$ [sudo] make install
 $ cd ../..
 ```
+
+## 3. Build & Run project
+
+### 3.1 Build and run key_value_server
+```sh
+$ cd key_value_store
+$ cmake .
+$ make
+$ ./key_value_service
+```
+
+### 3.2 Compile warbler service
+Create another terminal window. Run following commands.
+```sh
+$ cd warble
+$ cmake .
+$ make
+$ cd ..
+```
+
+### 3.3 Build and run func server
+```sh
+$ cd func
+$ cmake .
+$ make
+$ ./func_service_impl
+```
+
+### 3.4 Compile command-line interface
+```sh
+$ cd command-line-tool
+$ cmake .
+$ make
+```
+
+## 4. Samples to run
+Go to command-line-tool repo
+
+```sh
+$ cd command-line-tool
+$ ./warble --registeruser "user1" # Register a user called user1.
+$ ./warble --registeruser "user2" # Register a user called user2.
+$ ./warble --user "user1" --warble "hello from user1" # A warble is posted by user1
+$ ./warble --user "user2" --warble "hello from user2" --reply "<ID_OF_WARBLE_TO_REPLY>" # Reply to a warble
+$ ./warble --user "user1" --follow "user2" # User1 starts to follow user2
+$ ./warble --user "user1" --profile # Show following and followers of user1.
+
+```
+

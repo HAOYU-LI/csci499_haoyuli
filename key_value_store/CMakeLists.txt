@@ -14,6 +14,7 @@ link_directories(/usr/local/lib)
 # Finds Protobuf installation
 # Looks for protobuf-config.cmake file installed by Protobuf's CMake installation.
 set(protobuf_MODULE_COMPATIBLE TRUE)
+#set(glog_DIR ../third_party/glog)
 find_package(Protobuf REQUIRED)
 find_package(glog REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
