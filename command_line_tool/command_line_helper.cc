@@ -3,14 +3,18 @@
 namespace commandhelper {
 // This method is used to print a warble
 void PrintWarble(const Warble& warble) {
-  LOG(INFO) << "=====================warble=====================" << std::endl;
-  LOG(INFO) << "Username : " << warble.username() << std::endl;
-  LOG(INFO) << "Text : " << warble.text() << std::endl;
-  LOG(INFO) << "Warble id : " << warble.id() << std::endl;
+  std::cout << "=====================warble=====================" << std::endl;
+  std::cout << "Username : " << warble.username() << std::endl;
+  std::cout << "Text : " << warble.text() << std::endl;
+  std::cout << "Warble id : " << warble.id() << std::endl;
   if (warble.parent_id().length() > 0) {
-    LOG(INFO) << "Parent of this warble has id : " << warble.parent_id() << std::endl;
+    std::cout << "This warble replies to Parent id : " << warble.parent_id() << std::endl;
   }
-  LOG(INFO) << "=====================warble=====================" << std::endl;
+  std::string seconds = std::to_string(warble.timestamp().seconds());
+  std::string useconds = std::to_string(warble.timestamp().useconds());
+  time_t time = atoi((seconds + ":" + useconds).c_str());
+  std::cout << "This warble is posted on : " << asctime(localtime(&time));
+  std::cout << "=====================warble=====================" << std::endl;
   return;
 }
 
@@ -19,17 +23,17 @@ void PrintWarble(const Warble& warble) {
 void PrintUser(const std::string& username,
 	              const std::vector<std::string>& following,
 	              const std::vector<std::string>& followers) {
-	LOG(INFO) << "=====================user=====================" << std::endl;
-  LOG(INFO) << "User : " << username << " is following : ";
+	std::cout << "=====================user=====================" << std::endl;
+  std::cout << "User : " << username << " is following : ";
   for (std::string following_user : following) {
-    LOG(INFO) << following_user << " ";
+    std::cout << following_user << " ";
   }
   
-  LOG(INFO) << "User : " << username << " is followed by :";
+  std::cout << "User : " << username << " is followed by :";
   for (std::string follower : followers) {
-    LOG(INFO) << follower << " ";
+    std::cout << follower << " ";
   }
-  LOG(INFO) << "=====================user=====================" << std::endl;
+  std::cout << "=====================user=====================" << std::endl;
 }
 
 // ParseFlag method is used to parse the command line options
@@ -68,14 +72,14 @@ int ParseFlag(FlagOption flag_option) {
 // PrintOptions method is used to print all possible
 // flag options to users.
 void PrintOptions() {
-  LOG(INFO) << "Commands are invalid. ";
-  LOG(INFO) << "Valid flag options are as following : " << std::endl;
-  LOG(INFO) << "Register a user : ./warble --registeruser <USER_NAME>" << std::endl;
-  LOG(INFO) << "Post a warble : ./warble --user <USER_NAME> --warble <WARBLE_TEXT>" << std::endl;
-  LOG(INFO) << "Reply a warble : ./warble --user <USER_NAME> --warble <WARBLE_TEXT> --reply <WARBLE_ID>" << std::endl;
-  LOG(INFO) << "Follow a user : ./warble --user <USER_NAME> --follow <USER_NAME_TO_FOLLOW>" << std::endl;
-  LOG(INFO) << "Read a warble thread : ./warble --user <USER_NAME> --read <WARBLE_ID>" << std::endl;
-  LOG(INFO) << "Show profile of a user : ./warble --user <USER_NAME> --profile" << std::endl;
+  std::cout << "Commands are invalid. ";
+  std::cout << "Valid flag options are as following : " << std::endl;
+  std::cout << "Register a user : ./warble --registeruser <USER_NAME>" << std::endl;
+  std::cout << "Post a warble : ./warble --user <USER_NAME> --warble <WARBLE_TEXT>" << std::endl;
+  std::cout << "Reply a warble : ./warble --user <USER_NAME> --warble <WARBLE_TEXT> --reply <WARBLE_ID>" << std::endl;
+  std::cout << "Follow a user : ./warble --user <USER_NAME> --follow <USER_NAME_TO_FOLLOW>" << std::endl;
+  std::cout << "Read a warble thread : ./warble --user <USER_NAME> --read <WARBLE_ID>" << std::endl;
+  std::cout << "Show profile of a user : ./warble --user <USER_NAME> --profile" << std::endl;
   return;
 }
 
