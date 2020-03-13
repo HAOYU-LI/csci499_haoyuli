@@ -61,6 +61,7 @@ namespace func {
     return false;
   }
 
+  // Helper method used by Event to handling registeruser request.
   bool FuncClientImpl::RegisterHelper(int event_type,
   	                 ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
@@ -82,6 +83,7 @@ namespace func {
     return status.ok();
   }
 
+  // Helper method used by Event to handling warble request.
   bool FuncClientImpl::WarbleHelper(int event_type,
   	               ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
@@ -110,6 +112,7 @@ namespace func {
     return status.ok();
   }
 
+  // Helper method used by Event to handling follow request.
   bool FuncClientImpl::FollowHelper(int event_type,
   	               ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
@@ -133,6 +136,7 @@ namespace func {
     return status.ok();
   }
 
+  // Helper method used by Event to handling read request.
   bool FuncClientImpl::ReadHelper(int event_type,
   	             ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
@@ -159,7 +163,8 @@ namespace func {
 
     return status.ok();
   }
-
+  
+  // Helper method used by Event to handling profile request.
   bool FuncClientImpl::ProfileHelper(int event_type,
   	                ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
     EventRequest event_request;
