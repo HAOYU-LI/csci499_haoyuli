@@ -156,6 +156,7 @@ $ ./warble --registeruser "user1" # Register a user called user1.
 $ ./warble --registeruser "user2" # Register a user called user2.
 $ ./warble --user "user1" --warble "hello from user1" # A warble is posted by user1
 $ ./warble --user "user2" --warble "hello from user2" --reply "<ID_OF_WARBLE_TO_REPLY>" # Reply to a warble
+$ ./warble --user "user1" --read "<ID_OF_WARBLE_TO_READ>" # Read a warble thread that ends at warble id.
 $ ./warble --user "user1" --follow "user2" # User1 starts to follow user2
 $ ./warble --user "user1" --profile # Show following and followers of user1.
 
