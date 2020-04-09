@@ -123,6 +123,12 @@ $ make
 $ ./key_value_service
 ```
 
+Persistent storage mode can be activated by setting store flag. Once activated, key value
+server will load commands from log file and execute sequentially. Users' input will also be saved into designated log file.
+```sh
+$ ./key_value_service --store "[LOG_FILE]"
+```
+
 ### 3.2 Compile warbler service
 Create another terminal window. Run following commands.
 ```sh
