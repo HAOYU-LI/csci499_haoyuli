@@ -48,7 +48,7 @@ Status KeyValueStoreImpl::put(ServerContext* context,
   bool put_result = storage_.Put(request->key(), request->value());
   // If persistent mode is activated, save key and value into file.
   if (persistent_mode_) {
-    Persistent_store("put", request->key(), request->value());
+    PersistentStore("put", request->key(), request->value());
   }
   return Status::OK;
 }
@@ -81,7 +81,7 @@ Status KeyValueStoreImpl::remove(ServerContext* context,
   if (storage_.DeleteKey(request->key())) {
     // If persistent mode is activated, append remove request into file.
     if (persistent_mode_) {
-      Persistent_store("remove", request->key(), "");
+      PersistentStore("remove", request->key(), "");
     }
     return Status::OK;
   }
@@ -90,7 +90,7 @@ Status KeyValueStoreImpl::remove(ServerContext* context,
 
 // When instantiating a KeyValueStore class, load data from persistent_db_
 // if the file exists.
-void KeyValueStoreImpl::Persistent_load() {
+void KeyValueStoreImpl::PersistentLoad() {
   if (persistent_db_.length() == 0) {
     persistent_mode_ = false;
     return;
@@ -138,7 +138,7 @@ void KeyValueStoreImpl::Persistent_load() {
 
 // If persistent store mode is set, Put and Remove request will be saved into
 // persistent_db_ file
-void KeyValueStoreImpl::Persistent_store(std::string request, std::string key, std::string value) {
+void KeyValueStoreImpl::PersistentStore(std::string request, std::string key, std::string value) {
   std::ofstream out_file(persistent_db_, std::ios_base::app | std::ios_base::out);
   out_file << request << "\n";
   out_file << key.length() << "\n";

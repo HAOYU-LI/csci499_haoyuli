@@ -43,7 +43,7 @@ public:
   	                const RemoveRequest* request, RemoveReply* reply) override;
   // Constructor for KeyValueStoreImpl class.
   KeyValueStoreImpl(std::string file) : KeyValueStore::Service(), persistent_db_(file){
-    Persistent_load();
+    PersistentLoad();
   }
 
  private:
@@ -53,11 +53,11 @@ public:
 
   // When instantiating a KeyValueStore class, load data from persistent_db_
   // if the file exists.
-  void Persistent_load();
+  void PersistentLoad();
 
   // If persistent store mode is set, Put and Remove request will be saved into
   // persistent_db_ file
-  void Persistent_store(std::string request, std::string key, std::string value);
+  void PersistentStore(std::string request, std::string key, std::string value);
 };
 }// End of namespace kvstore
 
