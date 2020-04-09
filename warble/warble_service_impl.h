@@ -1,3 +1,9 @@
+/*
+  REVIEW ONLY
+  Based on the requirement, warble service was implemented to maintain an ephemeral state.
+  Users' requests will only be stored in key-value server while all methods in this class
+  have been marked as static.
+*/
 #ifndef WARBLE_SERVICE_IMPL_H
 #define WARBLE_SERVICE_IMPL_H
 
