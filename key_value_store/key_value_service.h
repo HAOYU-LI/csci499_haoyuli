@@ -1,6 +1,11 @@
 #ifndef KEY_VALUE_SERVICE_H
 #define KEY_VALUE_SERVICE_H
+#include <string>
+#include <iostream>
+#include <fstream>
+
 #include <grpcpp/grpcpp.h>
+#include <gflags/gflags.h>
 
 #include "key_value_store.pb.h"
 #include "key_value_store.grpc.pb.h"
@@ -26,6 +31,7 @@ namespace kvstore {
   implements put, get and remove rpc service defined in the proto file.
 */
 class KeyValueStoreImpl final : public KeyValueStore::Service {
+public:
   // Put element into key value backend storage. If put failed, return StatusCode::UNKNOWN
   Status put(ServerContext* context, 
   	          const PutRequest* request, PutReply* reply) override;
@@ -35,8 +41,23 @@ class KeyValueStoreImpl final : public KeyValueStore::Service {
   // Delete a given key from backend storage. If key doesn't exist, return StatuCode::NOT_FOUND.
   Status remove(ServerContext* context, 
   	                const RemoveRequest* request, RemoveReply* reply) override;
+  // Constructor for KeyValueStoreImpl class.
+  KeyValueStoreImpl(std::string file) : KeyValueStore::Service(), persistent_db_(file){
+    Persistent_load();
+  }
+
  private:
   Storage storage_;
+  std::string persistent_db_;
+  bool persistent_mode_;
+
+  // When instantiating a KeyValueStore class, load data from persistent_db_
+  // if the file exists.
+  void Persistent_load();
+
+  // If persistent store mode is set, Put and Remove request will be saved into
+  // persistent_db_ file
+  void Persistent_store(std::string request, std::string key, std::string value);
 };
 }// End of namespace kvstore
 
