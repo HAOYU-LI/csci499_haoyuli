@@ -42,21 +42,21 @@ public:
   Status remove(ServerContext* context, 
   	                const RemoveRequest* request, RemoveReply* reply) override;
   // Constructor for KeyValueStoreImpl class.
-  KeyValueStoreImpl(std::string file) : KeyValueStore::Service(), persistent_db_(file){
+  KeyValueStoreImpl(std::string file) : KeyValueStore::Service(), persistent_file_(file){
     PersistentLoad();
   }
 
  private:
   Storage storage_;
-  std::string persistent_db_;
+  std::string persistent_file_;
   bool persistent_mode_;
 
-  // When instantiating a KeyValueStore class, load data from persistent_db_
+  // When instantiating a KeyValueStore class, load data from persistent_file_
   // if the file exists.
   void PersistentLoad();
 
   // If persistent store mode is set, Put and Remove request will be saved into
-  // persistent_db_ file
+  // persistent_file_
   void PersistentStore(std::string request, std::string key, std::string value);
 };
 }// End of namespace kvstore

@@ -88,31 +88,30 @@ Status KeyValueStoreImpl::remove(ServerContext* context,
   return Status(StatusCode::NOT_FOUND, "Failed to delete the key.");
 }
 
-// When instantiating a KeyValueStore class, load data from persistent_db_
+// When instantiating a KeyValueStore class, load data from persistent_file_
 // if the file exists.
 void KeyValueStoreImpl::PersistentLoad() {
-  if (persistent_db_.length() == 0) {
+  if (persistent_file_.length() == 0) {
     persistent_mode_ = false;
     return;
   }
   
   persistent_mode_ = true;
   std::ifstream in_file;
-  in_file.open(persistent_db_);
+  in_file.open(persistent_file_);
   // If file doesn't exist before, create it.
   if (!in_file.is_open()) {
-    std::cout << "Create new file " << persistent_db_ << " for persistent store..." << std::endl;
+    std::cout << "Create new file " << persistent_file_ << " for persistent store..." << std::endl;
     std::ofstream out_file;
-    out_file.open(persistent_db_);
+    out_file.open(persistent_file_);
     out_file.close();
     std::cout << "Successfully created." << std::endl;
     return;
   }
-  /* 
-    Read data from persistent_db_. Key-Value pairs in `put` request are separated into four
-    parts. 1. # of chars for key; 2. Key; 3. # of chars for value; 4. Value;
-    For `remove` request, Only key is stored. Only first two parts are stored.
-  */
+   
+  //  Read data from persistent_file_. Key-Value pairs in `put` request are separated into four
+  //  parts. 1. # of chars for key; 2. Key; 3. # of chars for value; 4. Value;
+  //  For `remove` request, Only key is stored. Only first two parts are stored.
   std::string request;
   while (getline(in_file, request)) {
     std::string key_len, value_len, key, value;
@@ -137,9 +136,9 @@ void KeyValueStoreImpl::PersistentLoad() {
 }
 
 // If persistent store mode is set, Put and Remove request will be saved into
-// persistent_db_ file
+// persistent_file_
 void KeyValueStoreImpl::PersistentStore(std::string request, std::string key, std::string value) {
-  std::ofstream out_file(persistent_db_, std::ios_base::app | std::ios_base::out);
+  std::ofstream out_file(persistent_file_, std::ios_base::app | std::ios_base::out);
   out_file << request << "\n";
   out_file << key.length() << "\n";
   out_file << key << "\n";
