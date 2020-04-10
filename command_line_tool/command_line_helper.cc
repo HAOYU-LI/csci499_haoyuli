@@ -28,11 +28,12 @@ void PrintUser(const std::string& username,
   for (std::string following_user : following) {
     std::cout << following_user << " ";
   }
-  
+  std::cout << std::endl;
   std::cout << "User : " << username << " is followed by :";
   for (std::string follower : followers) {
     std::cout << follower << " ";
   }
+  std::cout << std::endl;
   std::cout << "=====================user=====================" << std::endl;
 }
 
