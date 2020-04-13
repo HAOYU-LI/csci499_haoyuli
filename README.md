@@ -168,3 +168,16 @@ $ ./warble --user "user1" --profile # Show following and followers of user1.
 
 ```
 
+## 5. Unit test
+### 5.1 Unit test for key_value_store
+```sh
+$ cd key_value_store
+$ ./unittest_key_value_data_structure
+```
+
+### 5.2 Unit test for warble methods
+```sh
+$ cd warble
+$ ./unittest_warble_service
+```
+
