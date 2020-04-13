@@ -54,6 +54,15 @@ Status WarbleService::WarbleMethod(const WarbleRequest* request,
   if (user_existence_value == nullptr) {
     return Status(StatusCode::NOT_FOUND, "User does not exist in database");
   }
+  // Reply Warble id should be valid
+  std::string parent_id = request->parent_id();
+  if (parent_id.length() != 0) {
+    std::vector<std::string> id_valid_key{parent_id};
+    std::vector<std::string>* id_valid_value = kvclient->Get(id_valid_key);
+    if (id_valid_value == nullptr) {
+      return Status(StatusCode::NOT_FOUND, "Parent id does not exist in database.");
+    }
+  }
   // Store WarbleRequest into a warble.
   Warble* warble_to_reply = reply->mutable_warble();
   warble_to_reply->set_username(request->username());
@@ -96,6 +105,11 @@ Status WarbleService::Follow(const FollowRequest* request,
   std::vector<std::string>* username_to_follow_existence_value = kvclient->Get(username_to_follow_existence_key);
   if (user_existence_value == nullptr || username_to_follow_existence_value == nullptr) {
     return Status(StatusCode::NOT_FOUND, "User or User_to_follow does not exist in database");
+  }
+
+  // Users cannot follow themselves.
+  if (username.compare(username_to_follow) == 0) {
+    return Status(StatusCode::NOT_FOUND, "Users cannot follow themselves.");
   }
 
   kvclient->Put(username_key, username_to_follow);
