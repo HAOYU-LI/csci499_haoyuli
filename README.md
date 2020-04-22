@@ -85,6 +85,7 @@ $ [sudo] git clone https://github.com/google/glog.git
 $ cd glog
 $ [sudo] ./autogen.sh
 $ [sudo] ./configure
+$ [sudo] cmake .
 $ [sudo] make
 $ [sudo] make install
 $ cd ..
