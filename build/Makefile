@@ -30,7 +30,7 @@ PROTOS_PATH = ../protos
 
 vpath %.proto $(PROTOS_PATH)
 
-all: system-check warble func_service_impl key_value_service warble_service_impl unittest_key_value_data_structure unittest_warble_service
+all: system-check warble func_service_impl key_value_service warble_service_impl unittest_key_value_data_structure
 
 key_value_service: key_value_store.pb.o key_value_store.grpc.pb.o ../key_value_store/key_value_service.o ../key_value_store/key_value_data_structure.o
 	$(CXX) $^ $(LDFLAGS) -o $@

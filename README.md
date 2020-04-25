@@ -182,3 +182,59 @@ $ cd warble
 $ ./unittest_warble_service
 ```
 
+## 6. Setup environment and build project with make
+### 6.1 Install required packages
+#### Install make
+```sh
+$ sudo apt-get -y update
+$ sudo apt-get -y install build-essential autoconf libtool pkg-config
+$ sudo apt-get -y install make
+```
+#### Install gflags
+```sh
+$ sudo apt-get -y install libgflags-dev
+```
+#### Install glog
+```sh
+$ sudo apt-get -y install libgoogle-glog-dev
+```
+
+#### Install gtest
+```sh
+$ sudo apt-get -y install libgtest-dev
+```
+
+#### Install grpc
+```sh
+$ git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc</br>
+$ cd grpc</br>
+$ git submodule update --init</br>
+$ make && sudo make install</br>
+$ cd third_party/protobuf</br>
+$ make && sudo make install</br>
+```
+
+### 6.2 Build project
+```sh
+$ git clone https://github.com/HAOYU-LI/csci499_haoyuli.git
+$ cd csci499_haoyuli
+$ git fetch origin compilation-with-make
+$ git checkout --track origin/compilation-with-make
+$ cd build
+$ make
+```
+### 6.3 Run project
+```sh
+$ ./key_value_service # Run key value backend server.
+$ ./func_service_impl # Run func server.
+```
+#### Then warble functions can be called in following way
+```sh
+$ ./warble --registeruser "user1" # Register a user called user1.
+$ ./warble --registeruser "user2" # Register a user called user2.
+$ ./warble --user "user1" --warble "hello from user1" # A warble is posted by user1
+$ ./warble --user "user2" --warble "hello from user2" --reply "<ID_OF_WARBLE_TO_REPLY>" # Reply to a warble
+$ ./warble --user "user1" --read "<ID_OF_WARBLE_TO_READ>" # Read a warble thread that ends at warble id.
+$ ./warble --user "user1" --follow "user2" # User1 starts to follow user2
+$ ./warble --user "user1" --profile # Show following and followers of user1.
+```
