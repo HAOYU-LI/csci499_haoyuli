@@ -206,12 +206,12 @@ $ sudo apt-get -y install libgtest-dev
 
 #### Install grpc
 ```sh
-$ git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc</br>
-$ cd grpc</br>
-$ git submodule update --init</br>
-$ make && sudo make install</br>
-$ cd third_party/protobuf</br>
-$ make && sudo make install</br>
+$ git clone -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc
+$ cd grpc
+$ git submodule update --init
+$ make && sudo make install
+$ cd third_party/protobuf
+$ make && sudo make install
 ```
 
 ### 6.2 Build project
