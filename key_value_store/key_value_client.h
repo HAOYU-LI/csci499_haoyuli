@@ -6,8 +6,8 @@
 
 #include <grpcpp/grpcpp.h>
 
-#include "key_value_store.pb.h"
-#include "key_value_store.grpc.pb.h"
+#include "../build/key_value_store.pb.h"
+#include "../build/key_value_store.grpc.pb.h"
 
 using kvstore::PutRequest;
 using kvstore::PutReply;

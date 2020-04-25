@@ -7,9 +7,9 @@
 #include <glog/logging.h>
 #include <google/protobuf/any.pb.h>
 
-#include "func_service.pb.h"
-#include "func_service.grpc.pb.h"
-#include "../warble/warble_service.pb.h"
+#include "../build/func_service.pb.h"
+#include "../build/func_service.grpc.pb.h"
+#include "../build/warble_service.pb.h"
 
 #include "../warble/warble_service_impl.h"
 

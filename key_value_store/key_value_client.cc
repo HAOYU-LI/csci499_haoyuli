@@ -8,9 +8,6 @@
 #include <grpcpp/grpcpp.h>
 #include <glog/logging.h>
 
-#include "key_value_store.pb.h"
-#include "key_value_store.grpc.pb.h"
-
 using kvstore::PutRequest;
 using kvstore::PutReply;
 using kvstore::GetRequest;

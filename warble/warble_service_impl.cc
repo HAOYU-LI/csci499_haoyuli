@@ -6,8 +6,6 @@
 
 #include <glog/logging.h>
 
-#include "warble_service.pb.h"
-
 using warble::Timestamp;
 using warble::Warble;
 using warble::RegisteruserRequest;

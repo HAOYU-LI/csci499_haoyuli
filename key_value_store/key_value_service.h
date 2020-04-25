@@ -7,8 +7,8 @@
 #include <grpcpp/grpcpp.h>
 #include <gflags/gflags.h>
 
-#include "key_value_store.pb.h"
-#include "key_value_store.grpc.pb.h"
+#include "../build/key_value_store.pb.h"
+#include "../build/key_value_store.grpc.pb.h"
 
 #include "key_value_data_structure.h"
 
