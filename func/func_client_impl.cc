@@ -195,4 +195,10 @@ namespace func {
     return status.ok();
   }
 
+  // Helper method used by Event to handling streaming warbles.
+  bool FuncClientImpl::StreamHelper(int event_type,
+                    ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
+
+  }
+
 }// namespace func

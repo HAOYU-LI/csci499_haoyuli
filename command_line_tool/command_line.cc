@@ -9,6 +9,7 @@ DEFINE_string(reply, "", "Indicates that the new warble is a reply to the given 
 DEFINE_string(follow, "", "Starts following the given username");
 DEFINE_string(read, "", "Reads the warble thread starting at the given id");
 DEFINE_bool(profile, false, "Gets the user’s profile of following and followers");
+DEFINE_string(stream, "", "Streams all new warbles containing ‘hashtag’");
 
 namespace commandline {
   CommandLineClient::CommandLineClient() {
@@ -20,6 +21,7 @@ namespace commandline {
     func_client->Hook(FOLLOW_TYPE, "follow");
     func_client->Hook(READ_TYPE, "read");
     func_client->Hook(PROFILE_TYPE, "profile");
+    func_client->Hook(STREAM_TYPE, "stream");
   }
   
   // Handle user registration call
@@ -113,6 +115,11 @@ namespace commandline {
     return profile_result;
   }
 
+// Handle warble streaming
+bool CommandLineClient::StreamHandler(std::string hashtag) {
+  return true;
+}
+
 }// namespace commandline
 
 int main(int argc, char** argv) {
@@ -127,6 +134,7 @@ int main(int argc, char** argv) {
   flag_option.follow = FLAGS_follow;
   flag_option.read = FLAGS_read;
   flag_option.profile = FLAGS_profile;
+  flag_option.hashtag = FLAGS_stream;
 
   int request_type = ParseFlag(flag_option);
   switch (request_type) {
@@ -147,6 +155,9 @@ int main(int argc, char** argv) {
       break;
     case PROFILE_FLAG:
       client.ProfileHandler(flag_option.user);
+      break;
+    case STREAM_FLAG:
+      client.StreamHandler(flag_option.hashtag);
       break;
     case OTHER_FLAG:
       PrintOptions();

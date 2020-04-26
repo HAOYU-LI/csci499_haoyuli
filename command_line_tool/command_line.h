@@ -33,6 +33,7 @@ using commandhelper::FOLLOW_FLAG;
 using commandhelper::READ_FLAG;
 using commandhelper::PROFILE_FLAG;
 using commandhelper::OTHER_FLAG;
+using commandhelper::STREAM_FLAG;
 
 
 namespace commandline {
@@ -62,6 +63,9 @@ public:
   // Handle profile request from command line.
   bool ProfileHandler(std::string username);
 
+  // Handle warble streaming
+  bool StreamHandler(std::string hashtag);
+
 private:
   FuncClientImpl* func_client;
 
@@ -70,6 +74,7 @@ private:
   const static int FOLLOW_TYPE { 2 };
   const static int READ_TYPE { 3 };
   const static int PROFILE_TYPE { 4 };
+  const static int STREAM_TYPE { 5 };
 };
 
 } // namespace commandline
