@@ -60,7 +60,7 @@ Status Profile(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
 // to specific request and reply.
 Status Stream(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   //TODO
-  return status;
+  return Status::OK;
 }
 
 FuncServiceImpl::FuncServiceImpl() {

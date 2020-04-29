@@ -27,6 +27,8 @@ using grpc::Status;
 using grpc::StatusCode;
 using grpc::Channel;
 using grpc::ClientContext;
+using warble::StreamRequest;
+using warble::StreamReply;
 
 namespace func {
 // parameter structure that is used to store
@@ -37,6 +39,7 @@ struct ClientEventParams {
   std::string warble_text;
   std::string warble_id;
   std::string parent_warble_id;
+  std::string hashtag;
 };
 
 // parameter structure that is used to store
@@ -46,6 +49,7 @@ struct ClientEventReply {
   std::vector<Warble> warble_threads;
   std::vector<std::string> following;
   std::vector<std::string> followers;
+  std::vector<Warble> stream;
 };
 
 /*

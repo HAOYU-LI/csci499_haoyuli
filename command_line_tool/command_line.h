@@ -66,6 +66,9 @@ public:
   // Handle warble streaming
   bool StreamHandler(std::string hashtag);
 
+  // Handles updating stream with new warbles
+  void CheckStream(std::string hashtag);
+
 private:
   FuncClientImpl* func_client;
 

@@ -117,7 +117,33 @@ namespace commandline {
 
 // Handle warble streaming
 bool CommandLineClient::StreamHandler(std::string hashtag) {
-  return true;
+    ClientEventParams event_params;
+    ClientEventReply  event_reply;
+    event_params.hashtag = hashtag;
+    bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
+
+    if (!stream_result) {
+        std::cout << "Streaming #" << hashtag << " failed." << std::endl;
+    }
+
+    return stream_result;
+}
+
+// Handles updating stream with new warbles
+void CommandLineClient::CheckStream(std::string hashtag){
+    ClientEventParams event_params;
+    ClientEventReply  event_reply;
+    event_params.hashtag = hashtag;
+    bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
+
+    LOG(INFO) << "In command_line_client, checking for new warbles with hashtag";
+
+    if (stream_result) {
+      for (int i = event_reply.stream.size() - 1; i >= 0; i --) {
+        Warble warble = event_reply.stream[i];
+        PrintWarble(warble);
+      }
+    }
 }
 
 }// namespace commandline

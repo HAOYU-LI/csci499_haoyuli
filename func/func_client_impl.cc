@@ -57,6 +57,9 @@ namespace func {
     if (function_name.compare(FuncClientImpl::PROFILE) == 0) {
       return ProfileHelper(event_type, client_event_params, client_event_reply);
     }
+    if (function_name.compare(FuncClientImpl::STREAM) == 0) {
+      return StreamHelper(event_type, client_event_params, client_event_reply);
+    }
 
     return false;
   }
@@ -198,6 +201,29 @@ namespace func {
   // Helper method used by Event to handling streaming warbles.
   bool FuncClientImpl::StreamHelper(int event_type,
                     ClientEventParams& client_event_params, ClientEventReply& client_event_reply) {
+    EventRequest event_request;
+    EventReply event_reply;
+    ClientContext event_context;
+    google::protobuf::Any any_request;
+    google::protobuf::Any any_reply;
+    event_request.set_event_type(event_type);
+
+    // Construct stream request and reply. Make function call to func server.
+    StreamRequest stream_request;
+    StreamReply stream_reply;
+    stream_request.set_hashtag(client_event_params.hashtag);
+
+    any_request.PackFrom(stream_request);
+    event_request.mutable_payload()->google::protobuf::Any::MergeFrom(any_request);
+    event_reply.mutable_payload()->google::protobuf::Any::MergeFrom(any_reply);
+    Status status = stub_->event(&event_context, event_request, &event_reply);
+    event_reply.payload().UnpackTo(&stream_reply);
+
+    for (Warble warble : stream_reply.warbles()) {
+      client_event_reply.stream.push_back(warble);
+    }
+
+    return status.ok();
 
   }
 
