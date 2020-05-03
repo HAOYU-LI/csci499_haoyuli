@@ -184,4 +184,29 @@ Status WarbleService::Profile(const ProfileRequest* request,
   
   return Status::OK;
 }
+
+// Returns warble that matches streaming
+Status WarbleService::Stream(const StreamRequest* request,
+                       StreamReply* reply,
+                       KeyValueClient* kvclient) {
+  std::string hashtag = request->hashtag();
+
+  const std::string hashtag_key = hashtag + "_";
+  std::vector<std::string> streaming_key{hashtag_key};
+  std::vector<std::string>* streaming_warbles = kvclient->Get(streaming_key);
+
+  if (streaming_warbles != nullptr) {
+    // Iterate through serialized warbles containing hashtag and parse to warble
+    while (streaming_warbles != nullptr && streaming_warbles->size() == 1) {
+      Warble* new_warble = reply->add_warbles();
+      new_warble->ParseFromString((*streaming_warbles)[0]);
+      delete streaming_warbles;
+    }
+  }
+  else{ // hashtag_ entry not yet in db 
+    kvclient->Put(hashtag_key, "");
+  }
+  return Status::OK;
+}
+
 }// namespace warble
