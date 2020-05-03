@@ -2,6 +2,8 @@
 #define COMMAND_LINE_H
 #include <string>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
@@ -63,8 +65,11 @@ public:
   // Handle profile request from command line.
   bool ProfileHandler(std::string username);
 
+  // Handles parsing raw hashtag string
+  std::vector<std::string> ParseHashtag(std::string raw_hashtag);
+
   // Handle warble streaming
-  bool StreamHandler(std::string hashtag);
+  bool StreamHandler(std::string username, std::string hashtag);
 
   // Handles updating stream with new warbles
   void CheckStream(std::string hashtag);

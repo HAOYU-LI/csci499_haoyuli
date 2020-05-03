@@ -115,18 +115,54 @@ namespace commandline {
     return profile_result;
   }
 
-// Handle warble streaming
-bool CommandLineClient::StreamHandler(std::string hashtag) {
-    ClientEventParams event_params;
-    ClientEventReply  event_reply;
-    event_params.hashtag = hashtag;
-    bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
+// Parse hashtag string 
+  std::vector<std::string> CommandLineClient::ParseHashtag(std::string raw_hashtag) {
+    LOG(INFO) << "In command_line_client, parsing hashtag";
+    std::vector<std::string> words; 
 
-    if (!stream_result) {
-        std::cout << "Streaming #" << hashtag << " failed." << std::endl;
+    std::stringstream ss(raw_hashtag); 
+    std::string word; 
+      
+    while(getline(ss, word, '#')) { 
+        words.push_back(word); 
     }
 
-    return stream_result;
+    return words; 
+}
+
+// Handle warble streaming
+bool CommandLineClient::StreamHandler(std::string username, std::string hashtag) {
+    std::vector<std::string> words = ParseHashtag(hashtag);
+    if(words.size() == 0){ // hashtag formatted incorrectly
+      std::cout << "Streaming #" << hashtag << " failed." << std::endl;
+      return false;
+    }
+
+    // TODO - clarify if there's #Hello#World, client should stream both hello and world
+    // and if it should be case sensitive
+    ClientEventParams event_params;
+    ClientEventReply  event_reply;
+    for(std::string word : words){
+      event_params.hashtag = word;
+      bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
+
+      if (!stream_result) {
+          std::cout << "Streaming #" << hashtag << " failed." << std::endl;
+          return false;
+      }
+    }
+
+    // Start streaming
+    while(true){
+      std::chrono::seconds duration(5);
+      std::this_thread::sleep_for(duration);
+
+      for(std::string word : words) {
+        CheckStream(word);
+      }
+    }
+
+    return true;
 }
 
 // Handles updating stream with new warbles
@@ -183,7 +219,7 @@ int main(int argc, char** argv) {
       client.ProfileHandler(flag_option.user);
       break;
     case STREAM_FLAG:
-      client.StreamHandler(flag_option.hashtag);
+      client.StreamHandler(flag_option.user, flag_option.hashtag);
       break;
     case OTHER_FLAG:
       PrintOptions();
