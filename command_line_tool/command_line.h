@@ -4,6 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <string.h> 
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>

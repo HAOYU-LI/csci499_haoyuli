@@ -120,11 +120,13 @@ namespace commandline {
     LOG(INFO) << "In command_line_client, parsing hashtag";
     std::vector<std::string> words; 
 
-    std::stringstream ss(raw_hashtag); 
-    std::string word; 
+    std::stringstream ss1(raw_hashtag); 
+    std::string hashtag; 
       
-    while(getline(ss, word, '#')) { 
-        words.push_back(word); 
+    while(std::getline(ss1, hashtag, ' ')) { 
+      if(hashtag[0] == '#' && hashtag.size() > 1){
+        words.push_back(hashtag.substr(1, hashtag.size())); 
+      }
     }
 
     return words; 
