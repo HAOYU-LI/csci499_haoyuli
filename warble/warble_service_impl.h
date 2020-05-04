@@ -19,6 +19,8 @@ using warble::ReadRequest;
 using warble::ReadReply;
 using warble::ProfileRequest;
 using warble::ProfileReply;
+using warble::StreamRequest;
+using warble::StreamReply;
 using grpc::Status;
 using grpc::StatusCode;
 using kvstore::KeyValueClient;
@@ -50,6 +52,10 @@ public:
   // Returns this user’s following and followers
   static Status Profile(const ProfileRequest* request,
                        ProfileReply* reply,
+                       KeyValueClient* kvclient);
+  // Returns warble that matches streaming
+  static Status Stream(const StreamRequest* request,
+                       StreamReply* reply,
                        KeyValueClient* kvclient);
 };
 }// End of warble namespace.
