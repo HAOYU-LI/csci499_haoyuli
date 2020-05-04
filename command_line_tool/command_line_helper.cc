@@ -47,24 +47,28 @@ int ParseFlag(FlagOption flag_option) {
   bool reply = flag_option.reply.length() != 0;
   bool follow = flag_option.follow.length() != 0;
   bool read = flag_option.read.length() != 0;
+  bool hashtag = flag_option.hashtag.length() != 0;
 
-  if (registeruser && !user && !warble && !reply && !follow && !read && !flag_option.profile) {
+  if (registeruser && !user && !warble && !reply && !follow && !read && !flag_option.profile && !hashtag) {
     return REGISTER_FLAG;
   }
-  if (!registeruser && user && warble && !reply && !follow && !read && !flag_option.profile) {
+  if (!registeruser && user && warble && !reply && !follow && !read && !flag_option.profile && !hashtag) {
     return WARBLE_FLAG;
   }
-  if (!registeruser && user && warble && reply && !follow && !read && !flag_option.profile) {
+  if (!registeruser && user && warble && reply && !follow && !read && !flag_option.profile && !hashtag) {
     return REPLY_FLAG;
   }
-  if (!registeruser && user && !warble && !reply && follow && !read && !flag_option.profile) {
+  if (!registeruser && user && !warble && !reply && follow && !read && !flag_option.profile && !hashtag) {
     return FOLLOW_FLAG;
   }
-  if (!registeruser && user && !warble && !reply && !follow && read && !flag_option.profile) {
+  if (!registeruser && user && !warble && !reply && !follow && read && !flag_option.profile && !hashtag) {
     return READ_FLAG;
   }
-  if (!registeruser && user && !warble && !reply && !follow && !read && flag_option.profile) {
+  if (!registeruser && user && !warble && !reply && !follow && !read && flag_option.profile && !hashtag) {
     return PROFILE_FLAG;
+  }
+  if(!registeruser && user && !warble && !reply && !follow && !read && !flag_option.profile && hashtag){
+    return STREAM_FLAG;
   }
   
   return OTHER_FLAG;
@@ -81,6 +85,7 @@ void PrintOptions() {
   std::cout << "Follow a user : ./warble --user <USER_NAME> --follow <USER_NAME_TO_FOLLOW>" << std::endl;
   std::cout << "Read a warble thread : ./warble --user <USER_NAME> --read <WARBLE_ID>" << std::endl;
   std::cout << "Show profile of a user : ./warble --user <USER_NAME> --profile" << std::endl;
+  std::cout << "Stream warbles based on hashtag : ./warble --user <USER_NAME> --stream #<HASHTAG_WORD>" << std::endl;
   return;
 }
 

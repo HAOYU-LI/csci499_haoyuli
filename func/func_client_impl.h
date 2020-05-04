@@ -27,6 +27,8 @@ using grpc::Status;
 using grpc::StatusCode;
 using grpc::Channel;
 using grpc::ClientContext;
+using warble::StreamRequest;
+using warble::StreamReply;
 
 namespace func {
 // parameter structure that is used to store
@@ -37,6 +39,7 @@ struct ClientEventParams {
   std::string warble_text;
   std::string warble_id;
   std::string parent_warble_id;
+  std::string hashtag;
 };
 
 // parameter structure that is used to store
@@ -46,6 +49,7 @@ struct ClientEventReply {
   std::vector<Warble> warble_threads;
   std::vector<std::string> following;
   std::vector<std::string> followers;
+  std::vector<Warble> stream;
 };
 
 /*
@@ -74,6 +78,7 @@ private:
   inline const static std::string FOLLOW { "follow" };
   inline const static std::string READ { "read" };
   inline const static std::string PROFILE { "profile" };
+  inline const static std::string STREAM { "stream" };
   
   // Wrapper function for Register call in warble service.
   bool RegisterHelper(int event_type,
@@ -89,6 +94,9 @@ private:
                ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
   // Wrapper function for Profile call in warble service.
   bool ProfileHelper(int event_type,
+                  ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
+  // Wrapper function for streaming in warble service.
+  bool StreamHelper(int event_type,
                   ClientEventParams& client_event_params, ClientEventReply& client_event_reply);
 };
 }// namespace func

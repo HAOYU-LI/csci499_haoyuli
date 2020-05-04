@@ -56,6 +56,13 @@ Status Profile(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
   return status;
 }
 
+// Wrapper method for beginning warble stream. Parse general Wrapper parameters
+// to specific request and reply.
+Status Stream(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
+  //TODO
+  return Status::OK;
+}
+
 FuncServiceImpl::FuncServiceImpl() {
 
   kvclient = new KeyValueClient(grpc::CreateChannel("0.0.0.0:50001",
@@ -75,6 +82,9 @@ FuncServiceImpl::FuncServiceImpl() {
   name_method_map_["profile"] = std::function<
                                        Status(RequestReplyWrapper&,
                                               kvstore::KeyValueClient*)>(Profile);
+  name_method_map_["stream"] = std::function<
+                                       Status(RequestReplyWrapper&,
+                                              kvstore::KeyValueClient*)>(Stream);
 }
 
 // The hook method Intended to allow a service (not a user) to specify that 
