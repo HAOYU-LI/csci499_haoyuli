@@ -218,7 +218,7 @@ namespace func {
     event_reply.mutable_payload()->google::protobuf::Any::MergeFrom(any_reply);
     Status status = stub_->event(&event_context, event_request, &event_reply);
     event_reply.payload().UnpackTo(&stream_reply);
-
+    std::cout << "size func client " << stream_reply.warbles().size() << std::endl;
     for (Warble warble : stream_reply.warbles()) {
       client_event_reply.stream.push_back(warble);
     }

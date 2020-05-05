@@ -59,7 +59,11 @@ Status Profile(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
 // Wrapper method for beginning warble stream. Parse general Wrapper parameters
 // to specific request and reply.
 Status Stream(RequestReplyWrapper& wrapper, KeyValueClient* kvclient) {
-  //TODO
+  StreamRequest request;
+  StreamReply reply;
+  wrapper.request.UnpackTo(&request);
+  Status status = WarbleService::Stream(&request, &reply, kvclient);
+  wrapper.reply.PackFrom(reply);
   return Status::OK;
 }
 

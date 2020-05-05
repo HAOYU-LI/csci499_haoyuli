@@ -73,7 +73,7 @@ public:
   bool StreamHandler(std::string username, std::string hashtag);
 
   // Handles updating stream with new warbles
-  void CheckStream(std::string hashtag);
+  void CheckStream(std::string hashtag, int& num_streams);
 
 private:
   FuncClientImpl* func_client;

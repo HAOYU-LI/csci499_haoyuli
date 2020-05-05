@@ -2,6 +2,7 @@
 #define WARBLE_SERVICE_IMPL_H
 
 #include <grpcpp/grpcpp.h>
+#include <unordered_map>
 #include "../build/warble_service.pb.h"
 
 #include "../key_value_store/key_value_data_structure.h"
@@ -57,6 +58,10 @@ public:
   static Status Stream(const StreamRequest* request,
                        StreamReply* reply,
                        KeyValueClient* kvclient);
+
+  static void WarbleStreaming(std::string serialized_warble, 
+                              std::string text,
+                              KeyValueClient* kvclient);
 };
 }// End of warble namespace.
 

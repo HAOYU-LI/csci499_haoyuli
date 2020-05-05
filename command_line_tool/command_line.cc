@@ -140,8 +140,6 @@ bool CommandLineClient::StreamHandler(std::string username, std::string hashtag)
       return false;
     }
 
-    // TODO - clarify if there's #Hello#World, client should stream both hello and world
-    // and if it should be case sensitive
     ClientEventParams event_params;
     ClientEventReply  event_reply;
     for(std::string word : words){
@@ -154,13 +152,14 @@ bool CommandLineClient::StreamHandler(std::string username, std::string hashtag)
       }
     }
 
+    int num_streams = 0;
     // Start streaming
     while(true){
       std::chrono::seconds duration(5);
       std::this_thread::sleep_for(duration);
 
-      for(std::string word : words) {
-        CheckStream(word);
+      for(std::string word : words) { //TODO change to pair with num streams and word
+        CheckStream(word, num_streams);
       }
     }
 
@@ -168,19 +167,24 @@ bool CommandLineClient::StreamHandler(std::string username, std::string hashtag)
 }
 
 // Handles updating stream with new warbles
-void CommandLineClient::CheckStream(std::string hashtag){
+void CommandLineClient::CheckStream(std::string hashtag, int& num_streams){
     ClientEventParams event_params;
     ClientEventReply  event_reply;
     event_params.hashtag = hashtag;
     bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
 
-    LOG(INFO) << "In command_line_client, checking for new warbles with hashtag";
-
     if (stream_result) {
-      for (int i = event_reply.stream.size() - 1; i >= 0; i --) {
-        Warble warble = event_reply.stream[i];
-        PrintWarble(warble);
+      if(num_streams == event_reply.stream.size()){ //only print most recent
+        return;
       }
+      else{
+        for (int i = num_streams; i<event_reply.stream.size(); i++) {
+          Warble warble = event_reply.stream[i];
+          PrintWarble(warble);
+          num_streams++;
+        }
+      }
+      
     }
 }
 
