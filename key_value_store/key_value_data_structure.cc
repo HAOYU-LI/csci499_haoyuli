@@ -9,7 +9,10 @@ bool Storage::Put(const string& key, const string& val) {
   if (notFindKey) {
     storage_map_[key] = vector<string>();
   }
-  storage_map_[key].push_back(val);
+  if(val != ""){
+    storage_map_[key].push_back(val);
+  }
+  
   return true;
 }
 

@@ -2,6 +2,10 @@
 #define COMMAND_LINE_H
 #include <string>
 #include <iostream>
+#include <chrono>
+#include <thread>
+#include <string.h> 
+#include <utility>
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
@@ -33,6 +37,7 @@ using commandhelper::FOLLOW_FLAG;
 using commandhelper::READ_FLAG;
 using commandhelper::PROFILE_FLAG;
 using commandhelper::OTHER_FLAG;
+using commandhelper::STREAM_FLAG;
 
 
 namespace commandline {
@@ -62,6 +67,15 @@ public:
   // Handle profile request from command line.
   bool ProfileHandler(std::string username);
 
+  // Handles parsing raw hashtag string
+  std::vector<std::pair<std::string, int> > ParseHashtag(std::string raw_hashtag);
+
+  // Handle warble streaming
+  bool StreamHandler(std::string username, std::string hashtag);
+
+  // Handles updating stream with new warbles
+  void CheckStream(std::string hashtag, int& num_streams);
+
 private:
   FuncClientImpl* func_client;
 
@@ -70,6 +84,7 @@ private:
   const static int FOLLOW_TYPE { 2 };
   const static int READ_TYPE { 3 };
   const static int PROFILE_TYPE { 4 };
+  const static int STREAM_TYPE { 5 };
 };
 
 } // namespace commandline

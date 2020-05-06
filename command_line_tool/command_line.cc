@@ -9,6 +9,7 @@ DEFINE_string(reply, "", "Indicates that the new warble is a reply to the given 
 DEFINE_string(follow, "", "Starts following the given username");
 DEFINE_string(read, "", "Reads the warble thread starting at the given id");
 DEFINE_bool(profile, false, "Gets the user’s profile of following and followers");
+DEFINE_string(stream, "", "Streams all new warbles containing ‘hashtag’");
 
 namespace commandline {
   CommandLineClient::CommandLineClient() {
@@ -20,6 +21,7 @@ namespace commandline {
     func_client->Hook(FOLLOW_TYPE, "follow");
     func_client->Hook(READ_TYPE, "read");
     func_client->Hook(PROFILE_TYPE, "profile");
+    func_client->Hook(STREAM_TYPE, "stream");
   }
   
   // Handle user registration call
@@ -113,6 +115,80 @@ namespace commandline {
     return profile_result;
   }
 
+// Parse hashtag string 
+  std::vector<std::pair<std::string, int> > CommandLineClient::ParseHashtag(std::string raw_hashtag) {
+    LOG(INFO) << "In command_line_client, parsing hashtag";
+    std::vector<std::pair<std::string, int> > words; 
+
+    std::stringstream ss1(raw_hashtag); 
+    std::string hashtag; 
+      
+    while(std::getline(ss1, hashtag, ' ')) { 
+      if(hashtag[0] == '#' && hashtag.size() > 1){
+        words.push_back(std::make_pair( hashtag.substr(1, hashtag.size()), 0)); 
+      }
+    }
+
+    return words; 
+}
+
+// Handle warble streaming
+bool CommandLineClient::StreamHandler(std::string username, std::string hashtag) {
+    std::vector<std::pair<std::string, int> > words = ParseHashtag(hashtag);
+    if(words.size() == 0){ // hashtag formatted incorrectly
+      std::cout << "Streaming #" << hashtag << " failed." << std::endl;
+      return false;
+    }
+
+    ClientEventParams event_params;
+    ClientEventReply  event_reply;
+    for(std::pair<std::string, int> word : words){
+      event_params.hashtag = word.first;
+      bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
+
+      if (!stream_result) {
+          std::cout << "Streaming #" << hashtag << " failed." << std::endl;
+          return false;
+      }
+    }
+
+    // Start streaming - check for new warbles every 5 seconds
+    while(true){
+      std::chrono::seconds duration(5);
+      std::this_thread::sleep_for(duration);
+
+      for(int i=0; i<words.size(); i++){
+        int num_streams = words[i].second;
+        CheckStream(words[i].first, num_streams);
+        words[i].second = num_streams;
+      }
+    }
+
+    return true;
+}
+
+// Handles updating stream with new warbles
+void CommandLineClient::CheckStream(std::string hashtag, int& num_streams){
+    ClientEventParams event_params;
+    ClientEventReply  event_reply;
+    event_params.hashtag = hashtag;
+    bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
+
+    if (stream_result) {
+      if(num_streams == event_reply.stream.size()){ //only print most recent
+        return;
+      }
+      else{
+        for (int i = num_streams; i<event_reply.stream.size(); i++) {
+          Warble warble = event_reply.stream[i];
+          PrintWarble(warble);
+          num_streams++;
+        }
+      }
+      
+    }
+}
+
 }// namespace commandline
 
 int main(int argc, char** argv) {
@@ -127,6 +203,7 @@ int main(int argc, char** argv) {
   flag_option.follow = FLAGS_follow;
   flag_option.read = FLAGS_read;
   flag_option.profile = FLAGS_profile;
+  flag_option.hashtag = FLAGS_stream;
 
   int request_type = ParseFlag(flag_option);
   switch (request_type) {
@@ -147,6 +224,9 @@ int main(int argc, char** argv) {
       break;
     case PROFILE_FLAG:
       client.ProfileHandler(flag_option.user);
+      break;
+    case STREAM_FLAG:
+      client.StreamHandler(flag_option.user, flag_option.hashtag);
       break;
     case OTHER_FLAG:
       PrintOptions();

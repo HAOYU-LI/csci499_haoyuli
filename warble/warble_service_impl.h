@@ -2,6 +2,7 @@
 #define WARBLE_SERVICE_IMPL_H
 
 #include <grpcpp/grpcpp.h>
+#include <unordered_map>
 #include "../build/warble_service.pb.h"
 
 #include "../key_value_store/key_value_data_structure.h"
@@ -19,6 +20,8 @@ using warble::ReadRequest;
 using warble::ReadReply;
 using warble::ProfileRequest;
 using warble::ProfileReply;
+using warble::StreamRequest;
+using warble::StreamReply;
 using grpc::Status;
 using grpc::StatusCode;
 using kvstore::KeyValueClient;
@@ -51,6 +54,14 @@ public:
   static Status Profile(const ProfileRequest* request,
                        ProfileReply* reply,
                        KeyValueClient* kvclient);
+  // Returns warble that matches streaming
+  static Status Stream(const StreamRequest* request,
+                       StreamReply* reply,
+                       KeyValueClient* kvclient);
+
+  static void WarbleStreaming(std::string serialized_warble, 
+                              std::string text,
+                              KeyValueClient* kvclient);
 };
 }// End of warble namespace.
 

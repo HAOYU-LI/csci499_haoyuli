@@ -36,6 +36,7 @@ const int FOLLOW_FLAG = 4;
 const int READ_FLAG = 5;
 const int PROFILE_FLAG = 6;
 const int OTHER_FLAG = 7;
+const int STREAM_FLAG = 8;
 
 // FlagOption is used to store flags information from command line.
 // Once we support more funtionalities, it's easy to add
@@ -48,6 +49,7 @@ struct FlagOption {
   std::string follow;
   std::string read;
   bool profile;
+  std::string hashtag;
 };
 
 // This method is used to print a warble

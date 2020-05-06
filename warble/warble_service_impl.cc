@@ -42,6 +42,29 @@ Status WarbleService::RegisterUser(const RegisteruserRequest* request,
   return Status::OK;
 }
 
+void WarbleService::WarbleStreaming(std::string serialized_warble, 
+                    std::string text,
+                    KeyValueClient* kvclient){
+  std::vector<std::string> streaming_key{"stream_"};
+  std::vector<std::string>* hashtags = kvclient->Get(streaming_key);
+  std::unordered_map<std::string, std::string> hashtag_map;
+
+  for (int i=0; i<hashtags->size(); i++){
+    hashtag_map.insert({(*hashtags)[i],(*hashtags)[i]});
+  }
+
+  std::stringstream ss(text); 
+  std::string word; 
+      
+  while (std::getline(ss, word, ' ')) { 
+    auto it = hashtag_map.find(word);
+    if (it != hashtag_map.end()){
+      std::string stream_key = word + "_";
+      kvclient->Put(stream_key, serialized_warble);
+    }
+  }
+}
+
 // Posts a new warble (optionally as a reply), returns the id of the new warble
 Status WarbleService::WarbleMethod(const WarbleRequest* request,
                              WarbleReply* reply,
@@ -83,7 +106,9 @@ Status WarbleService::WarbleMethod(const WarbleRequest* request,
   std::string serialized_warble;
   warble_to_reply->SerializeToString(&serialized_warble);
   kvclient->Put(warble_id, serialized_warble);
-  
+
+  // Parse warble for streaming
+  WarbleStreaming(serialized_warble, request->text(), kvclient);
   return Status::OK;
 }
 
@@ -184,4 +209,31 @@ Status WarbleService::Profile(const ProfileRequest* request,
   
   return Status::OK;
 }
+
+// Returns warble that matches streaming
+Status WarbleService::Stream(const StreamRequest* request,
+                       StreamReply* reply,
+                       KeyValueClient* kvclient) {
+  std::string hashtag = request->hashtag();
+
+  const std::string hashtag_key = hashtag + "_";
+  std::vector<std::string> streaming_key{hashtag_key};
+  std::vector<std::string>* streaming_warbles = kvclient->Get(streaming_key);
+
+  if (streaming_warbles != nullptr) {
+    // Iterate through serialized warbles containing hashtag and parse to warble
+    for(int i=0; i<streaming_warbles->size(); i++){
+      Warble* new_warble = reply->add_warbles();
+      new_warble->ParseFromString((*streaming_warbles)[i]);
+    }
+    delete streaming_warbles;
+  }
+  else{ // hashtag_ entry not yet in db 
+    kvclient->Put(hashtag_key, "");
+    std::string stream_key = "stream_";
+    kvclient->Put(stream_key, hashtag);
+  }
+  return Status::OK;
+}
+
 }// namespace warble
