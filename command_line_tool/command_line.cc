@@ -116,16 +116,16 @@ namespace commandline {
   }
 
 // Parse hashtag string 
-  std::vector<std::string> CommandLineClient::ParseHashtag(std::string raw_hashtag) {
+  std::vector<std::pair<std::string, int> > CommandLineClient::ParseHashtag(std::string raw_hashtag) {
     LOG(INFO) << "In command_line_client, parsing hashtag";
-    std::vector<std::string> words; 
+    std::vector<std::pair<std::string, int> > words; 
 
     std::stringstream ss1(raw_hashtag); 
     std::string hashtag; 
       
     while(std::getline(ss1, hashtag, ' ')) { 
       if(hashtag[0] == '#' && hashtag.size() > 1){
-        words.push_back(hashtag.substr(1, hashtag.size())); 
+        words.push_back(std::make_pair( hashtag.substr(1, hashtag.size()), 0)); 
       }
     }
 
@@ -134,7 +134,7 @@ namespace commandline {
 
 // Handle warble streaming
 bool CommandLineClient::StreamHandler(std::string username, std::string hashtag) {
-    std::vector<std::string> words = ParseHashtag(hashtag);
+    std::vector<std::pair<std::string, int> > words = ParseHashtag(hashtag);
     if(words.size() == 0){ // hashtag formatted incorrectly
       std::cout << "Streaming #" << hashtag << " failed." << std::endl;
       return false;
@@ -142,8 +142,8 @@ bool CommandLineClient::StreamHandler(std::string username, std::string hashtag)
 
     ClientEventParams event_params;
     ClientEventReply  event_reply;
-    for(std::string word : words){
-      event_params.hashtag = word;
+    for(std::pair<std::string, int> word : words){
+      event_params.hashtag = word.first;
       bool stream_result = func_client->Event(STREAM_TYPE, event_params, event_reply);
 
       if (!stream_result) {
@@ -152,14 +152,15 @@ bool CommandLineClient::StreamHandler(std::string username, std::string hashtag)
       }
     }
 
-    int num_streams = 0;
-    // Start streaming
+    // Start streaming - check for new warbles every 5 seconds
     while(true){
       std::chrono::seconds duration(5);
       std::this_thread::sleep_for(duration);
 
-      for(std::string word : words) { //TODO change to pair with num streams and word
-        CheckStream(word, num_streams);
+      for(int i=0; i<words.size(); i++){
+        int num_streams = words[i].second;
+        CheckStream(words[i].first, num_streams);
+        words[i].second = num_streams;
       }
     }
 
